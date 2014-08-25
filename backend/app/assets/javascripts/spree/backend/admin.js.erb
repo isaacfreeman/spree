@@ -270,8 +270,6 @@ $(document).ready(function(){
     openVariantEdit( $(newVariant) );
   })
 
-
-
   $('body').on('click', '.delete-resource', function() {
     var el = $(this);
     if (confirm(el.data("confirm"))) {
@@ -295,11 +293,6 @@ $(document).ready(function(){
     }
     return false;
   });
-
-  $('body').on('change', '.edit_field', function() {
-    updateShowElement( $(this) );
-  });
-
 
   $('body').on('click', 'a.spree_remove_fields', function() {
     el = $(this);
