@@ -123,13 +123,19 @@ handle_date_picker_fields = function(){
   });
 }
 
-function openVariantEdit( variant ) {
-  variant.children('.show').slideUp();
-  variant.children('.edit').slideDown();
+function openVariantEdit(variant) {
+  variant.children('.show').slideUp(function() {
+    variant.children('.edit').slideDown();
+  });
 }
-function closeVariantEdit( variant ) {
-  variant.children('.edit').slideUp();
-  variant.children('.show').slideDown();
+function closeVariantEdit(variant) {
+  variant.children('.edit').slideUp(function() {
+    variant.children('.show').slideDown();
+  });
+}
+function toggleDestroyMarker(variant) {
+  variant.find('.destroy_marker').trigger('click');
+  variant.toggleClass('remove');
 }
 function updateShowElementFromInput( editField ) {
   var correspondingShowElement = '#show_' + editField.attr('id');
@@ -174,6 +180,10 @@ $(document).ready(function(){
   $('body').on('click', '#variants .variant .edit .fa-ok', function(event) {
     event.preventDefault();
     closeVariantEdit( $(this).closest('.variant') );
+  });
+  $('body').on('click', '#variants .variant .show .delete-variant', function(event) {
+    event.preventDefault();
+    toggleDestroyMarker( $(this).closest('.variant') );
   });
   $('body').on('change', '#variants .variant .edit input', function(event) {
     updateShowElementFromInput( $(this) );
