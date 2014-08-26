@@ -19,9 +19,10 @@
         </span>w
         &times;
         <span id="show_product_variants_attributes_<%= variant_counter %>_depth" class="field-display">
-          <%= number_with_precision(variant.depth, :precision => 2) %>d
+          <%= number_with_precision(variant.depth, :precision => 2) %>
         </span>d
         <br />
+        Weight:
         <span id="show_product_variants_attributes_<%= variant_counter %>_weight" class="field-display">
           <%= number_with_precision(variant.weight, :precision => 2) %>
         </span>
@@ -32,17 +33,16 @@
           <%= link_to_with_icon('edit',
                                 Spree.t(:edit),
                                 variant.new_record? ? '#' : edit_admin_product_variant_url(@product, variant),
-                                :no_text => true
+                                :no_text => true,
+                                :data => {:action => 'edit'}
                                ) %>
-          &nbsp;
           <%= link_to_with_icon('trash',
                                 Spree.t(:delete),
                                 admin_product_variant_url(@product, variant),
                                 :no_text => true,
-                                :class => "delete-resource",
-                                :'data-confirm' => Spree.t(:are_you_sure),
-                                :'data-action' => 'remove'
+                                :class => "delete-variant"
                                ) unless variant.deleted? || variant.new_record? %>
+          <%= vf.check_box '_destroy', :value => false, :class => 'destroy_marker', :style => 'display: none;' %>
         <% end %>
       </td>
     </tr>
