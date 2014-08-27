@@ -57,7 +57,7 @@ module Spree
     has_many :prices, -> { order('spree_variants.position, spree_variants.id, currency') }, through: :variants
 
     has_many :stock_items, through: :variants_including_master
-    
+
     has_many :line_items, through: :variants_including_master
     has_many :orders, through: :line_items
 
@@ -92,6 +92,8 @@ module Spree
     attr_accessor :option_values_hash
 
     accepts_nested_attributes_for :product_properties, allow_destroy: true, reject_if: lambda { |pp| pp[:property_name].blank? }
+
+    accepts_nested_attributes_for :variants, allow_destroy: true, :reject_if => lambda { |v| v[:sku].blank? }
 
     alias :options :product_option_types
 

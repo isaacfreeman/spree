@@ -1,3 +1,10 @@
+form.edit_product {
+  .inline-menu {
+    float: right;
+    margin-bottom: 10px;
+  }
+}
+
 [data-hook="admin_products_sidebar"] {
   // .field.checkbox:first-child {
   //   margin-top: 36px;
@@ -14,9 +21,27 @@
   input, select, textarea, .select2-container {
     width: 100%;
   }
-  input[type="checkbox"] {
-    width: auto;
-    vertical-align: bottom;
+  fieldset {
+    border-bottom: none;
+  }
+}
+
+[data-hook="admin_product_form_product_details"] {
+  border: none;
+  legend {
+    display: none;
+  }
+  .info-actions {
+    text-align: right;
+  }
+}
+
+[data-hook="admin_product_form_master_variant"] {
+  legend {
+    display: none;
+  }
+  .info-actions {
+    text-align: right;
   }
 }
 
@@ -32,6 +57,99 @@
 
   strong {
     color: $color-2;
+  }
+}
+
+#variants {
+  thead {
+    th {
+    }
+    th.option_types {
+      border-bottom: none
+    }
+    th.option_type {
+      border-left: none;
+      border-right: none;
+      border-top: none;
+      &:last-child {
+        border-right: 1px solid #cee1f4;
+      }
+    }
+  }
+  tbody.variant {
+    &.even tr td {
+      background-color: $color-tbl-even;
+      img {
+        border: 1px solid very-light($color-3, 6);
+      }
+    }
+    &:last-child td {
+      border-bottom: 1px solid $color-border;
+    }
+    td {
+      border-bottom: none;
+    }
+    td.sku label,
+    td.option_value label {
+      display: none;
+    }
+    td.option_value {
+      text-align: center;
+    }
+    tr.edit {
+      td {
+        vertical-align: top;
+        border-right: none;
+        border-top: 1px solid $color-border;
+        &:nth-child(6) {
+          border-right: 1px solid $color-border;
+        }
+
+      }
+    }
+    &.remove {
+      td {
+        background: $color-action-remove-bg;
+        border-top: solid 1px $color-action-remove-brd;
+        border-bottom: solid 1px $color-action-remove-brd;
+        border-right: solid 1px $color-action-remove-brd;
+        text-decoration: line-through;
+        &:first-child {
+          border-left: solid 1px $color-action-remove-brd;
+          border-right: none;
+        }
+      }
+      td.actions {
+        background: none;
+        text-decoration: none;
+      }
+    }
+  }
+  tbody.ui-sortable-placeholder {
+    display: table-row;
+    td {
+      border: 1px solid $color-2 !important;
+      visibility: visible !important;
+
+      &.actions {
+        background-color: transparent;
+        border-right: none !important;
+        border-top: none !important;
+        border-bottom: none !important;
+        border-left: 1px solid $color-2 !important;
+      }
+    }
+  }
+  tbody.ui-sortable-helper {
+    display: table;
+    td {
+      background-color: lighten($color-3, 33);
+      border-bottom: 1px solid $color-border;
+
+      &.actions {
+        display: none;
+      }
+    }
   }
 }
 
@@ -72,7 +190,7 @@
     }
   }
   td {
-    vertical-align: top;
+    vertical-align: middle;
 
     &.stock_location_info {
       padding: 0;

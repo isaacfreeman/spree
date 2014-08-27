@@ -21,6 +21,15 @@ module Spree
         end
       end
 
+      def index
+        @tax_categories = TaxCategory.order(:name)
+        respond_with(@collection) do |format|
+          if request.xhr?
+            format.html { render partial: 'spree/admin/products/variants_table', :layout => false }
+          end
+        end
+      end
+
       protected
         def new_before
           @object.attributes = @object.product.master.attributes.except('id', 'created_at', 'deleted_at',
