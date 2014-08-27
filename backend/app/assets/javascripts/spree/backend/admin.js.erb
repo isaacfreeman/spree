@@ -191,6 +191,7 @@ $(document).ready(function(){
   $('body').on('change', '#variants .variant .edit .field-option_value select', function(event) {
     updateShowElementFromSelect( $(this) );
   });
+
   $('body').on('change','#product_option_type_ids', function(event) {
     updateOptionTypes();
   });
