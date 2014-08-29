@@ -119,22 +119,3 @@
   $('.select2-container').css({width: '20em'})
   </script>
 <% end %>
-
-
-<script>
-  $( "a#manage_properties" ).click(function( event ) {
-    event.preventDefault();
-    $( '#admin_product_form_product_properties' ).slideToggle();
-  });
-  $( "a#add_variants" ).click(function( event ) {
-    event.preventDefault();
-    $( '#admin_product_form_multiple_variants' ).slideToggle();
-    $( '#admin_product_form_master_variant' ).slideToggle();
-  });
-  $( ".variant-edit .fa-ok" ).click(function( event ) {
-    event.preventDefault();
-    target = $(this).data('target');
-    $( '#' + target + '-edit' ).slideUp();
-    $( '#' + target ).slideDown();
-  });
-</script>

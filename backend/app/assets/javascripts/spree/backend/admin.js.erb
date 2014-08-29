@@ -137,36 +137,35 @@ function toggleDestroyMarker(variant) {
   variant.find('.destroy_marker').trigger('click');
   variant.toggleClass('remove');
 }
-function updateShowElementFromInput( editField ) {
+function updateShowElementFromInput(editField) {
   var correspondingShowElement = '#show_' + editField.attr('id');
-  $(correspondingShowElement).html( editField.val() );
+  $(correspondingShowElement).html(editField.val());
 }
-function updateShowElementFromSelect( editField ) {
+function updateShowElementFromSelect(editField) {
   var correspondingShowElement = '#show_' + editField.closest('.field-option_value').attr('id');
-  $(correspondingShowElement).html( editField.children('option:selected').text() );
+  $(correspondingShowElement).html(editField.children('option:selected').text());
 }
-
-function replaceId( element, newId ) {
-  element.prop("id", element.prop("id").replace(/\d+/, newId))
+function replaceId(element, newId) {
+  element.prop('id', element.prop('id').replace(/\d+/, newId))
 }
 function updateOptionTypes() {
-  var product_slug = $('form.edit_product').data('product-slug');
-  var option_type_ids = $('#product_option_type_ids').val();
+  var productSlug = $('form.edit_product').data('product-slug');
+  var optionTypeIds = $('#product_option_type_ids').val();
   $.ajax({  dataType: 'json',
-            url: "/admin/products/" + product_slug,
-            data: { product: { option_type_ids: option_type_ids }},
+            url: "/admin/products/" + productSlug,
+            data: { product: { optionTypeIds: optionTypeIds }},
             type: 'patch',
-            success: function( data ) {
+            success: function(data) {
               updateVariantsTable();
             }
   });
 }
 function updateVariantsTable() {
-  var product_slug = $('form.edit_product').data('product-slug');
+  var productSlug = $('form.edit_product').data('product-slug');
   $.ajax({  dataType: 'html',
-            url: "/admin/products/" + product_slug + "/variants",
+            url: "/admin/products/" + productSlug + "/variants",
             type: 'get',
-            success: function( data ) {
+            success: function(data) {
               $('table#variants').replaceWith(data);
             }
   });
@@ -175,26 +174,40 @@ function updateVariantsTable() {
 $(document).ready(function(){
   $('body').on('click', '#variants .variant .show .fa-edit', function(event) {
     event.preventDefault();
-    openVariantEdit( $(this).closest('.variant') );
+    openVariantEdit($(this).closest('.variant'));
   });
   $('body').on('click', '#variants .variant .edit .fa-ok', function(event) {
     event.preventDefault();
-    closeVariantEdit( $(this).closest('.variant') );
+    closeVariantEdit($(this).closest('.variant'));
   });
   $('body').on('click', '#variants .variant .show .delete-variant', function(event) {
     event.preventDefault();
-    toggleDestroyMarker( $(this).closest('.variant') );
+    toggleDestroyMarker($(this).closest('.variant'));
   });
   $('body').on('change', '#variants .variant .edit input', function(event) {
-    updateShowElementFromInput( $(this) );
+    updateShowElementFromInput($(this));
   });
   $('body').on('change', '#variants .variant .edit .field-option_value select', function(event) {
-    updateShowElementFromSelect( $(this) );
+    updateShowElementFromSelect($(this));
   });
-
   $('body').on('change','#product_option_type_ids', function(event) {
     updateOptionTypes();
   });
+  $( "a#manage_properties" ).click(function( event ) {
+    event.preventDefault();
+    $( '#admin_product_form_product_properties' ).slideToggle();
+  });
+  $( "a#add_variants" ).click(function( event ) {
+    event.preventDefault();
+    $( '#admin_product_form_multiple_variants, #admin_product_form_master_variant' ).slideToggle();
+  });
+  $( ".variant-edit .fa-ok" ).click(function( event ) {
+    event.preventDefault();
+    target = $(this).data('target');
+    $( '#' + target + '-edit' ).slideUp();
+    $( '#' + target ).slideDown();
+  });
+
 
   handle_date_picker_fields();
   $(".observe_field").on('change', function() {
@@ -218,19 +231,18 @@ $(document).ready(function(){
     var target = $(this).data("target");
     var elementTag = $(this).data("elementtag");
     var newElement = $(target + ' ' + elementTag + ':visible:last').clone();
-    var new_id = new Date().getTime() + (uniqueId++);
+    var newId = new Date().getTime() + (uniqueId++);
     newElement.find("input, select").each(function () {
       var el = $(this);
       el.val("");
-      el.prop("id", el.prop("id").replace(/\d+/, new_id))
-      el.prop("name", el.prop("name").replace(/\d+/, new_id))
+      el.prop("id", el.prop("id").replace(/\d+/, newId))
+      el.prop("name", el.prop("name").replace(/\d+/, newId))
     })
     // When cloning a new row, set the href of all icons to be an empty "#"
     // This is so that clicking on them does not perform the actions for the
     // duplicated row
     newElement.find("a").each(function () {
-      var el = $(this);
-      el.prop('href', '#');
+      $(this).prop('href', '#');
     })
     $(target).prepend(newElement);
     $(newElement).find(".select2").select2();
@@ -246,15 +258,15 @@ $(document).ready(function(){
     replaceId(newVariant, newId);
     newVariant.find(".field-display").each(function () {
       $(this).html("");
-      replaceId( $(this), newId);
+      replaceId($(this), newId);
     });
     newVariant.find("input, select").each(function () {
       $(this).val("");
-      replaceId( $(this), newId);
+      replaceId($(this), newId);
       $(this).prop("name", $(this).prop("name").replace(/\d+/, newId))
     });
     newVariant.find(".field-option_value").each(function () {
-      replaceId( $(this), newId);
+      replaceId($(this), newId);
     });
 
 
@@ -268,7 +280,7 @@ $(document).ready(function(){
     $(newVariant).find('.select2-container ').remove();
     $(newVariant).find(".select2").select2();
     $(target).append(newVariant);
-    openVariantEdit( $(newVariant) );
+    openVariantEdit($(newVariant));
   })
 
   $('body').on('click', '.delete-resource', function() {
@@ -382,7 +394,7 @@ $(document).ready(function(){
   });
 
   $('table.sortable-variants').ready(function(){
-    var td_count = $(this).find('tbody tr:first-child td').length
+    var tdCount = $(this).find('tbody tr:first-child td').length
     $('table.sortable-variants').sortable(
       {
         handle: '.handle',
@@ -397,14 +409,13 @@ $(document).ready(function(){
           // Set correct height for placehoder (from dragged tr)
           ui.placeholder.height(ui.item.height())
           // Fix placeholder content to make it correct width
-          ui.placeholder.html("<td colspan='"+(td_count-1)+"'></td><td class='actions'></td>")
+          ui.placeholder.html("<td colspan='"+(tdCount-1)+"'></td><td class='actions'></td>")
         },
         stop: function (event, ui) {
           // Fix odd/even classes after reorder
           $("table.sortable tr:even").removeClass("odd even").addClass("even");
           $("table.sortable tr:odd").removeClass("odd even").addClass("odd");
         }
-
       });
   });
 
