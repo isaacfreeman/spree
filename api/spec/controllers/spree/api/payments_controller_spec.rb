@@ -64,11 +64,6 @@ module Spree
           api_get :index, :order_id => order.to_param
           assert_unauthorized!
         end
-
-        it "can view the payments for an order given the order token" do
-          api_get :index, :order_id => order.to_param, :order_token => order.guest_token
-          json_response["payments"].first.should have_attributes(attributes)
-        end
       end
     end
 
@@ -150,7 +145,7 @@ module Spree
             end
 
             it "does not raise a stack level error" do
-              skip "Investigate why a payment.reload after the request raises 'stack level too deep'"
+              pending "Investigate why a payment.reload after the request raises 'stack level too deep'"
               payment.reload.state.should == "failed"
             end
           end

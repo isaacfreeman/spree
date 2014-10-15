@@ -5,6 +5,7 @@ SPREE, PLEASE CONSULT THAT BRANCH'S README AND NOT THIS ONE.**
 SUMMARY
 -------
 
+
 Spree is a complete open source e-commerce solution built with Ruby on Rails. It
 was originally developed by Sean Schofield and is now maintained by a dedicated
 [core team](https://github.com/spree/spree/wiki/Core-Team). You can find out more by
@@ -29,8 +30,6 @@ and perhaps combine it with your own custom backend admin instead of using
 spree_api.
 
 [![Code Climate](https://codeclimate.com/github/spree/spree.png)](https://codeclimate.com/github/spree/spree)
-[![Issue Stats](http://issuestats.com/github/spree/spree/badge/pr)](http://issuestats.com/github/spree/spree)
-[![Issue Stats](http://issuestats.com/github/spree/spree/badge/issue)](http://issuestats.com/github/spree/spree)
 
 Installation
 ------------
@@ -43,9 +42,9 @@ The fastest way to get started is by using the spree command line tool
 available in the spree gem which will add Spree to an existing Rails application.
 
 ```shell
-gem install rails -v 4.1.6
+gem install rails -v 4.1.4
 gem install spree
-rails _4.1.6_ new my_store
+rails _4.1.4_ new my_store
 spree install my_store
 ```
 
@@ -66,22 +65,15 @@ To auto accept all prompts while running the install generator, pass -A as an op
 spree install my_store -A
 ```
 
-To select a specific branch, pass in the `--branch` option. If there is no branch, you
-will be given the latest version of either spree_auth_devise or spree_gateway.
-
-```shell
-spree install my_store --branch "2-4-stable"
-```
-
 Using stable builds and bleeding edge
 -------------
 
 To use a stable build of Spree, you can manually add Spree to your
-Rails application. To use the 2-4-stable branch of Spree, add this line to
+Rails 4.1.x application. To use the 2-3-stable branch of Spree, add this line to
 your Gemfile.
 
 ```ruby
-gem 'spree', github: 'spree/spree', branch: '2-4-stable'
+gem 'spree', github: 'spree/spree', branch: '2-3-stable'
 ```
 
 Alternatively, if you want to use the bleeding edge version of Spree, use this
@@ -99,7 +91,7 @@ If you wish to have authentication included also, you will need to add the
 `spree_auth_devise` gem as well. Either this:
 
 ```ruby
-gem 'spree_auth_devise', github: 'spree/spree_auth_devise', branch: '2-4-stable'
+gem 'spree_auth_devise', github: 'spree/spree_auth_devise', branch: '2-3-stable'
 ```
 
 Or this:
@@ -205,23 +197,17 @@ your Ruby objects on each request.  The introduction of the asset pipeline in
 Rails 3.1 made default performance in development mode significantly worse. There
 are, however, a few tricks to speeding up performance in development mode.
 
-First, in your `config/development.rb`:
-
-```ruby
-config.assets.debug = false
-```
-
 You can precompile your assets as follows:
 
 ```shell
-RAILS_ENV=development bundle exec rake assets:precompile
+bundle exec rake assets:precompile:nondigest
 ```
 
 If you want to remove precompiled assets (recommended before you commit to Git
 and push your changes) use the following rake task:
 
 ```shell
-RAILS_ENV=development bundle exec rake assets:clean
+bundle exec rake assets:clean
 ```
 
 Use Dedicated Spree Devise Authentication
@@ -288,12 +274,12 @@ DB=postgres bundle exec rake test_app
 
 If you want to run specs for only a single spec file
 ```shell
-bundle exec rspec spec/models/spree/state_spec.rb
+bundle exec rspec spec/models/state_spec.rb
 ```
 
 If you want to run a particular line of spec
 ```shell
-bundle exec rspec spec/models/spree/state_spec.rb:7
+bundle exec rspec spec/models/state_spec.rb:7
 ```
 
 You can also enable fail fast in order to stop tests at the first failure

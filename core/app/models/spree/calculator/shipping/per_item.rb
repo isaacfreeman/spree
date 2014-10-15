@@ -11,11 +11,8 @@ module Spree
       end
 
       def compute_package(package)
-        compute_from_quantity(package.contents.sum(&:quantity))
-      end
-
-      def compute_from_quantity(quantity)
-        self.preferred_amount * quantity
+        content_items = package.contents
+        self.preferred_amount * content_items.sum { |item| item.quantity }
       end
     end
   end

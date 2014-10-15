@@ -84,7 +84,7 @@ module Spree
       end
 
       def cancel
-        @order.canceled_by(try_spree_current_user)
+        @order.cancel!
         flash[:success] = Spree.t(:order_canceled)
         redirect_to :back
       end

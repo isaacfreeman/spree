@@ -19,11 +19,11 @@ module Spree
     let(:address_params) { { :country_id => Country.first.id, :state_id => State.first.id } }
 
     let(:billing_address) { { :firstname => "Tiago", :lastname => "Motta", :address1 => "Av Paulista",
-                              :city => "Sao Paulo", :zipcode => "35762", :phone => "12345678",
+                              :city => "Sao Paulo", :zipcode => "1234567", :phone => "12345678",
                               :country_id => Country.first.id, :state_id => State.first.id} }
 
     let(:shipping_address) { { :firstname => "Tiago", :lastname => "Motta", :address1 => "Av Paulista",
-                               :city => "Sao Paulo", :zipcode => "35762", :phone => "12345678",
+                               :city => "Sao Paulo", :zipcode => "1234567", :phone => "12345678",
                                :country_id => Country.first.id, :state_id => State.first.id} }
 
     let(:current_api_user) do
@@ -300,14 +300,13 @@ module Spree
 
       let(:address_params) { { :country_id => Country.first.id, :state_id => State.first.id } }
       let(:billing_address) { { :firstname => "Tiago", :lastname => "Motta", :address1 => "Av Paulista",
-                                :city => "Sao Paulo", :zipcode => "35762", :phone => "12345678",
+                                :city => "Sao Paulo", :zipcode => "1234567", :phone => "12345678",
                                 :country_id => Country.first.id, :state_id => State.first.id} }
       let(:shipping_address) { { :firstname => "Tiago", :lastname => "Motta", :address1 => "Av Paulista",
-                                 :city => "Sao Paulo", :zipcode => "35762", :phone => "12345678",
+                                 :city => "Sao Paulo", :zipcode => "1234567", :phone => "12345678",
                                  :country_id => Country.first.id, :state_id => State.first.id} }
 
       before do
-        Spree::LineItem.stub(:find_by_id).and_return(Spree::LineItem.new)
         Order.any_instance.stub :user => current_api_user
         order.next # Switch from cart to address
         order.bill_address = nil
@@ -376,7 +375,7 @@ module Spree
       it "can add billing address" do
         api_put :update, :id => order.to_param, :order => { :bill_address_attributes => billing_address }
 
-        expect(order.reload.bill_address).to_not be_nil
+        order.reload.bill_address.should_not be_nil
       end
 
       it "receives error message if trying to add billing address with errors" do
@@ -512,10 +511,10 @@ module Spree
           end
 
           it "includes the ship_total in the response" do
-            api_get :show, id: order.to_param
+            api_get :show, :id => order.to_param
 
-            expect(json_response['ship_total']).to eq '10.0'
-            expect(json_response['display_ship_total']).to eq '$10.00'
+            json_response['ship_total'].should == '0.0'
+            json_response['display_ship_total'].should == '$0.00'
           end
 
           it "returns available shipments for an order" do
@@ -529,7 +528,6 @@ module Spree
             json_shipping_method = shipment["shipping_methods"][0]
             json_shipping_method["id"].should == shipping_method.id
             json_shipping_method["name"].should == shipping_method.name
-            json_shipping_method["code"].should == shipping_method.code
             json_shipping_method["zones"].should_not be_empty
             json_shipping_method["shipping_categories"].should_not be_empty
 
@@ -539,9 +537,8 @@ module Spree
             shipping_rate = shipment["shipping_rates"][0]
             shipping_rate["name"].should == json_shipping_method["name"]
             shipping_rate["cost"].should == "10.0"
-            shipping_rate["selected"].should be true
+            shipping_rate["selected"].should be_true
             shipping_rate["display_cost"].should == "$10.00"
-            shipping_rate["shipping_method_code"].should == json_shipping_method["code"]
 
             shipment["stock_location_name"].should_not be_blank
             manifest_item = shipment["manifest"][0]
@@ -565,9 +562,9 @@ module Spree
 
       it "responds with orders updated_at with miliseconds precision" do
         if ActiveRecord::Base.connection.adapter_name == "Mysql2"
-          skip "MySQL does not support millisecond timestamps."
+          pending "MySQL does not support millisecond timestamps."
         else
-          skip "Probable need to make it call as_json. See https://github.com/rails/rails/commit/0f33d70e89991711ff8b3dde134a61f4a5a0ec06"
+          pending "Probable need to make it call as_json. See https://github.com/rails/rails/commit/0f33d70e89991711ff8b3dde134a61f4a5a0ec06"
         end
 
         api_get :index

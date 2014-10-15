@@ -57,7 +57,7 @@ module Spree
     has_many :prices, -> { order('spree_variants.position, spree_variants.id, currency') }, through: :variants
 
     has_many :stock_items, through: :variants_including_master
-    
+
     has_many :line_items, through: :variants_including_master
     has_many :orders, through: :line_items
 
@@ -66,7 +66,7 @@ module Spree
     delegate_belongs_to :master, :cost_price
 
     after_create :set_master_variant_defaults
-    after_create :add_associations_from_prototype
+    after_create :add_properties_and_option_types_from_prototype
     after_create :build_variants_from_option_values_hash, if: :option_values_hash
 
     after_save :save_master
@@ -92,6 +92,8 @@ module Spree
     attr_accessor :option_values_hash
 
     accepts_nested_attributes_for :product_properties, allow_destroy: true, reject_if: lambda { |pp| pp[:property_name].blank? }
+    accepts_nested_attributes_for :variants, allow_destroy: true, reject_if: lambda { |v| v[:sku].blank? }
+    accepts_nested_attributes_for :variant_images, allow_destroy: true
 
     alias :options :product_option_types
 
@@ -100,6 +102,10 @@ module Spree
     # the master variant is not a member of the variants array
     def has_variants?
       variants.any?
+    end
+
+    def has_images?
+      variant_images.any?
     end
 
     def tax_category
@@ -219,13 +225,12 @@ module Spree
 
     private
 
-    def add_associations_from_prototype
+    def add_properties_and_option_types_from_prototype
       if prototype_id && prototype = Spree::Prototype.find_by(id: prototype_id)
         prototype.properties.each do |property|
           product_properties.create(property: property)
         end
         self.option_types = prototype.option_types
-        self.taxons = prototype.taxons
       end
     end
 
@@ -274,22 +279,11 @@ module Spree
     end
 
     # there's a weird quirk with the delegate stuff that does not automatically save the delegate object
-    # when saving so we force a save using a hook
-    # Fix for issue #5306
+    # when saving so we force a save using a hook.
     def save_master
-      begin
-        if master && (master.changed? || master.new_record? || (master.default_price && (master.default_price.changed? || master.default_price.new_record?)))
-          master.save!
-          @nested_changes = true
-        end
-
-      # If the master cannot be saved, the Product object will get its errors
-      # and will be destroyed
-      rescue ActiveRecord::RecordInvalid
-        master.errors.each do |att, error|
-          self.errors.add(att, error)
-        end
-        raise
+      if master && (master.changed? || master.new_record? || (master.default_price && (master.default_price.changed? || master.default_price.new_record?)))
+        master.save
+        @nested_changes = true
       end
     end
 
@@ -301,8 +295,8 @@ module Spree
     # Try building a slug based on the following fields in increasing order of specificity.
     def slug_candidates
       [
-        :name,
-        [:name, :sku]
+          :name,
+          [:name, :sku]
       ]
     end
 

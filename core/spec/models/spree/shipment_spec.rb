@@ -129,9 +129,9 @@ describe Spree::Shipment do
   it "#final_price" do
     shipment = Spree::Shipment.new
     shipment.cost = 10
-    shipment.adjustment_total = -2
+    shipment.promo_total = -2
     shipment.included_tax_total = 1
-    expect(shipment.final_price).to eq(8)
+    expect(shipment.final_price).to eq(9)
   end
 
   context "manifest" do
@@ -342,7 +342,7 @@ describe Spree::Shipment do
 
       it "should validate with inventory" do
         shipment.inventory_units = [create(:inventory_unit)]
-        shipment.valid?.should be true
+        shipment.valid?.should be_true
       end
     end
 
@@ -350,7 +350,7 @@ describe Spree::Shipment do
       before { Spree::Config.set track_inventory_levels: false }
 
       it "should validate with no inventory" do
-        shipment.valid?.should be true
+        shipment.valid?.should be_true
       end
     end
   end
@@ -675,7 +675,7 @@ describe Spree::Shipment do
   context "#destroy" do
     it "destroys linked shipping_rates" do
       reflection = Spree::Shipment.reflect_on_association(:shipping_rates)
-      expect(reflection.options[:dependent]).to be(:delete_all)
+      reflection.options[:dependent] = :destroy
     end
   end
 
@@ -689,7 +689,7 @@ describe Spree::Shipment do
 
     it "are logged to the database" do
       shipment.state_changes.should be_empty
-      expect(shipment.ready!).to be true
+      expect(shipment.ready!).to be_true
       shipment.state_changes.count.should == 1
       state_change = shipment.state_changes.first
       expect(state_change.previous_state).to eq('pending')

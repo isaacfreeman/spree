@@ -7,11 +7,12 @@ stage:
     - ln -sf $PWD/public $PWD/../public
 
   run:
-    # workdir is sandbox
+    # pwd is sanbox
     - bundle exec rails server
 
   database:
-    - echo "skip database stage. rake sandbox already did everything"
+    # actually do nothing (and prevent default Teatro behavior): `rake sandbox` already did everything
+    - true
 
 config:
   database: postgresql

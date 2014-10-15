@@ -19,8 +19,7 @@ describe "Promotion Adjustments" do
       select2 "Item total", :from => "Add rule of type"
       within('#rule_fields') { click_button "Add" }
 
-      eventually_fill_in "promotion_promotion_rules_attributes_#{Spree::Promotion.count}_preferred_amount_min", :with => 30
-      eventually_fill_in "promotion_promotion_rules_attributes_#{Spree::Promotion.count}_preferred_amount_max", :with => 60
+      eventually_fill_in "promotion_promotion_rules_attributes_#{Spree::Promotion.count}_preferred_amount", :with => 30
       within('#rule_fields') { click_button "Update" }
 
       select2 "Create whole-order adjustment", :from => "Add action of type"
@@ -36,8 +35,7 @@ describe "Promotion Adjustments" do
 
       first_rule = promotion.rules.first
       first_rule.class.should == Spree::Promotion::Rules::ItemTotal
-      first_rule.preferred_amount_min.should == 30
-      first_rule.preferred_amount_max.should == 60
+      first_rule.preferred_amount.should == 30
 
       first_action = promotion.actions.first
       first_action.class.should == Spree::Promotion::Actions::CreateAdjustment
@@ -79,8 +77,7 @@ describe "Promotion Adjustments" do
       select2 "Item total", :from => "Add rule of type"
       within('#rule_fields') { click_button "Add" }
 
-      eventually_fill_in "promotion_promotion_rules_attributes_1_preferred_amount_min", :with => 30
-      eventually_fill_in "promotion_promotion_rules_attributes_1_preferred_amount_max", :with => 60
+      eventually_fill_in "promotion_promotion_rules_attributes_1_preferred_amount", :with => 30
       within('#rule_fields') { click_button "Update" }
 
       select2 "Create whole-order adjustment", :from => "Add action of type"
@@ -95,8 +92,7 @@ describe "Promotion Adjustments" do
 
       first_rule = promotion.rules.first
       first_rule.class.should == Spree::Promotion::Rules::ItemTotal
-      first_rule.preferred_amount_min.should == 30
-      first_rule.preferred_amount_max.should == 60
+      first_rule.preferred_amount.should == 30
 
       first_action = promotion.actions.first
       first_action.class.should == Spree::Promotion::Actions::CreateAdjustment
@@ -229,8 +225,7 @@ describe "Promotion Adjustments" do
 
       select2 "Item total", :from => "Add rule of type"
       within('#rule_fields') { click_button "Add" }
-      eventually_fill_in "promotion_promotion_rules_attributes_1_preferred_amount_min", :with => "50"
-      eventually_fill_in "promotion_promotion_rules_attributes_1_preferred_amount_max", :with => "150"
+      eventually_fill_in "promotion_promotion_rules_attributes_1_preferred_amount", :with => "50"
       within('#rule_fields') { click_button "Update" }
 
       select2 "Create whole-order adjustment", :from => "Add action of type"
@@ -244,8 +239,7 @@ describe "Promotion Adjustments" do
 
       first_rule = promotion.rules.first
       first_rule.class.should == Spree::Promotion::Rules::ItemTotal
-      first_rule.preferred_amount_min.should == 50
-      first_rule.preferred_amount_max.should == 150
+      first_rule.preferred_amount.should == 50
 
       first_action = promotion.actions.first
       first_action.class.should == Spree::Promotion::Actions::CreateAdjustment

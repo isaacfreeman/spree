@@ -9,7 +9,7 @@ module Spree
     respond_to :html
 
     def index
-      @searcher = build_searcher(params.merge(include_images: true))
+      @searcher = build_searcher(params)
       @products = @searcher.retrieve_products
       @taxonomies = Spree::Taxonomy.includes(root: :children)
     end
@@ -22,7 +22,7 @@ module Spree
 
     private
       def accurate_title
-        @product ? @product.meta_title || @product.name : super
+        @product ? @product.name : super
       end
 
       def load_product

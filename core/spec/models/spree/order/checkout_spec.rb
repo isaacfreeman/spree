@@ -34,17 +34,17 @@ describe Spree::Order do
     end
 
     it '.find_transition when contract was broken' do
-      expect(Spree::Order.find_transition({foo: :bar, baz: :dog})).to be_falsey
+      Spree::Order.find_transition({foo: :bar, baz: :dog}).should be_false
     end
 
     it '.remove_transition' do
       options = {:from => transitions.first.keys.first, :to => transitions.first.values.first}
       Spree::Order.stub(:next_event_transition).and_return([options])
-      Spree::Order.remove_transition(options).should be_truthy
+      Spree::Order.remove_transition(options).should be_true
     end
 
     it '.remove_transition when contract was broken' do
-      expect(Spree::Order.remove_transition(nil)).to be_falsey
+      Spree::Order.remove_transition(nil).should be_false
     end
 
     it "always return integer on checkout_step_index" do
@@ -55,11 +55,11 @@ describe Spree::Order do
     it "passes delivery state when transitioning from address over delivery to payment" do
       order.stub :payment_required? => true
       order.state = "address"
-      order.passed_checkout_step?("delivery").should be false
+      order.passed_checkout_step?("delivery").should be_false
       order.state = "delivery"
-      order.passed_checkout_step?("delivery").should be false
+      order.passed_checkout_step?("delivery").should be_false
       order.state = "payment"
-      order.passed_checkout_step?("delivery").should be true
+      order.passed_checkout_step?("delivery").should be_true
     end
 
     context "#checkout_steps" do
@@ -247,36 +247,6 @@ describe Spree::Order do
       end
     end
 
-    context "to delivery" do
-      context 'when order has default selected_shipping_rate_id' do
-        let(:shipment) { create(:shipment, order: order) }
-        let(:shipping_method) { create(:shipping_method) }
-        let(:shipping_rate) { [
-          Spree::ShippingRate.create!(shipping_method: shipping_method, cost: 10.00, shipment: shipment)
-        ] }
-
-        before do
-          order.state = 'address'
-          shipment.selected_shipping_rate_id = shipping_rate.first.id
-          order.email = "user@example.com"
-          order.save!
-
-          allow(order).to receive(:has_available_payment)
-          allow(order).to receive(:create_proposed_shipments)
-          allow(order).to receive(:ensure_available_shipping_rates) { true }
-        end
-
-        it 'should invoke set_shipment_cost' do
-          expect(order).to receive(:set_shipments_cost)
-          order.next!
-        end
-
-        it 'should update shipment_total' do
-          expect { order.next! }.to change{ order.shipment_total }.by(10.00)
-        end
-      end
-    end
-
     context "from delivery" do
       before do
         order.state = 'delivery'
@@ -389,36 +359,16 @@ describe Spree::Order do
 
       context "without confirmation required" do
         before do
-          order.email = "spree@example.com"
           order.stub :confirmation_required? => false
           order.stub :payment_required? => true
-          order.payments << FactoryGirl.create(:payment, state: payment_state, order: order)
+          order.stub :payments => [1]
         end
 
-        context 'when there is at least one valid payment' do
-          let(:payment_state) { 'checkout' }
-
-          before do
-            expect(order).to receive(:process_payments!).once { true }
-          end
-
-          it "transitions to complete" do
-            order.next!
-            assert_state_changed(order, 'payment', 'complete')
-            expect(order.state).to eq('complete')
-          end
-        end
-
-        context 'when there is only an invalid payment' do
-          let(:payment_state) { 'failed' }
-
-          it "raises a StateMachine::InvalidTransition" do
-            expect {
-              order.next!
-            }.to raise_error(StateMachine::InvalidTransition, /#{Spree.t(:no_payment_found)}/)
-
-            expect(order.errors[:base]).to include(Spree.t(:no_payment_found))
-          end
+        it "transitions to complete" do
+          order.should_receive(:process_payments!).once.and_return true
+          order.next!
+          assert_state_changed(order, 'payment', 'complete')
+          order.state.should == "complete"
         end
       end
 
@@ -482,7 +432,7 @@ describe Spree::Order do
       end
     end
 
-    skip "should only call default transitions once when checkout_flow is redefined" do
+    pending "should only call default transitions once when checkout_flow is redefined" do
       order = SubclassedOrder.new
       order.stub :payment_required? => true
       order.should_receive(:process_payments!).once
@@ -514,7 +464,7 @@ describe Spree::Order do
 
     it "should not keep old events when checkout_flow is redefined" do
       state_machine = Spree::Order.state_machine
-      state_machine.states.any? { |s| s.name == :address }.should be false
+      state_machine.states.any? { |s| s.name == :address }.should be_false
       known_states = state_machine.events[:next].branches.map(&:known_states).flatten
       known_states.should_not include(:address)
       known_states.should_not include(:delivery)
@@ -615,32 +565,27 @@ describe Spree::Order do
   end
 
   describe "payment processing" do
+    # Turn off transactional fixtures so that we can test that
+    # processing state is persisted.
     self.use_transactional_fixtures = false
-    before do
-      Spree::PaymentMethod.destroy_all # TODO data is leaking between specs as database_cleaner or rspec 3 was broken in Rails 4.1.6 & 4.0.10
-      # Turn off transactional fixtures so that we can test that
-      # processing state is persisted.
-      DatabaseCleaner.strategy = :truncation
-    end
-
-    after do
+    before(:all) { DatabaseCleaner.strategy = :truncation }
+    after(:all) do
       DatabaseCleaner.clean
-      # Turn on transactional fixtures again.
-      self.use_transactional_fixtures = true
+      DatabaseCleaner.strategy = :transaction
     end
-
     let(:order) { OrderWalkthrough.up_to(:payment) }
     let(:creditcard) { create(:credit_card) }
-    let!(:payment_method) { create(:credit_card_payment_method, environment: 'test') }
+    let!(:payment_method) { create(:credit_card_payment_method, :environment => 'test') }
 
     it "does not process payment within transaction" do
       # Make sure we are not already in a transaction
-      expect(ActiveRecord::Base.connection.open_transactions).to eq 0
+      ActiveRecord::Base.connection.open_transactions.should == 0
 
       Spree::Payment.any_instance.should_receive(:authorize!) do
-        expect(ActiveRecord::Base.connection.open_transactions).to eq 0
+        ActiveRecord::Base.connection.open_transactions.should == 0
       end
 
+      order.payments.create!({ :amount => order.outstanding_balance, :payment_method => payment_method, :source => creditcard })
       order.next!
     end
   end

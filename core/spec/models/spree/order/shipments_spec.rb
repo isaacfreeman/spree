@@ -1,5 +1,5 @@
 describe Spree::Order do
-  let(:order) { create(:order_with_totals) }
+  let(:order) { stub_model(Spree::Order) }
 
   context "ensure shipments will be updated" do
     before { Spree::Shipment.create!(order: order) }
@@ -11,7 +11,7 @@ describe Spree::Order do
 
     it "puts order back in address state" do
       order.ensure_updated_shipments
-      expect(order.state).to eq 'address'
+      expect(order.state).to eql "address"
     end
 
     it "resets shipment_total" do

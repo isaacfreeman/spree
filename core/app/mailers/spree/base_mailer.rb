@@ -1,6 +1,5 @@
 module Spree
   class BaseMailer < ActionMailer::Base
-
     def from_address
       Spree::Config[:mails_from]
     end

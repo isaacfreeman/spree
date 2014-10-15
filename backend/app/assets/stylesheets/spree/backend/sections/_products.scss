@@ -1,3 +1,8 @@
+form.edit_product .inline-menu {
+  float: right;
+  margin-bottom: 10px;
+}
+
 [data-hook="admin_products_sidebar"] {
   // .field.checkbox:first-child {
   //   margin-top: 36px;
@@ -14,9 +19,27 @@
   input, select, textarea, .select2-container {
     width: 100%;
   }
-  input[type="checkbox"] {
-    width: auto;
-    vertical-align: bottom;
+  fieldset {
+    border-bottom: none;
+  }
+}
+
+[data-hook="admin_product_form_product_details"] {
+  border: none;
+  legend {
+    display: none;
+  }
+  .info-actions {
+    text-align: right;
+  }
+}
+
+[data-hook="admin_product_form_master_variant"] {
+  legend {
+    display: none;
+  }
+  .info-actions {
+    text-align: right;
   }
 }
 
@@ -72,7 +95,7 @@
     }
   }
   td {
-    vertical-align: top;
+    vertical-align: middle;
 
     &.stock_location_info {
       padding: 0;

@@ -55,9 +55,9 @@ describe Spree::Order do
     end
 
     it "sets confirmation delivered when finalizing" do
-      expect(order.confirmation_delivered?).to be false
+      expect(order.confirmation_delivered?).to be_false
       order.finalize!
-      expect(order.confirmation_delivered?).to be true
+      expect(order.confirmation_delivered?).to be_true
     end
 
     it "should not send duplicate confirmation emails" do

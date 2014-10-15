@@ -102,7 +102,7 @@ module Spree
         end
       end
 
-      describe "#edit" do
+      describe "#show" do
         let(:order)           { customer_return.order }
         let(:customer_return) { create(:customer_return, line_items_count: 3) }
 
@@ -140,10 +140,6 @@ module Spree
 
         it "loads the return items that are still pending" do
           expect(assigns(:pending_return_items)).to eq []
-        end
-
-        it "loads the reimbursements that are still pending" do
-          expect(assigns(:pending_reimbursements)).to eq []
         end
       end
 

@@ -1,0 +1,10 @@
+<ul class="toolbar inline-menu" data-hook="toolbar-product-variants">
+  <li id="new_var_link" data-hook>
+    <%= link_to_with_icon('plus', Spree.t(:new_variant), 'javascript:', :data => { :target => '#variants', :elementTag => 'tbody' }, :class => "plus button spree_add_variant") %>
+  </li>
+  <li>
+    <%= link_to_with_icon('filter', @deleted.blank? ? Spree.t(:show_deleted) : Spree.t(:show_active), admin_product_variants_url(@product, :deleted => @deleted.blank? ? "on" : "off"), :class => 'button', remote: true) %>
+  </li>
+</ul>
+
+<%= render :partial => "spree/admin/products/variants_table", :formats => [:html], :handlers => [:erb] %>

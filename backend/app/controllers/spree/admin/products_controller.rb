@@ -30,7 +30,11 @@ module Spree
           invoke_callbacks(:update, :after)
           flash[:success] = flash_message_for(@object, :successfully_updated)
           respond_with(@object) do |format|
-            format.html { redirect_to location_after_save }
+            if request.xhr?
+              format.json
+            else
+              format.html { redirect_to location_after_save }
+            end
             format.js   { render :layout => false }
           end
         else
@@ -63,6 +67,18 @@ module Spree
         end
 
         redirect_to edit_admin_product_url(@new)
+      end
+
+      def edit
+        @variants = @product.variants
+        @variants = [@product.master] if @variants.empty?
+        @properties = Spree::Property.pluck(:name)
+        @product.product_properties.build
+        @stock_locations = StockLocation.accessible_by(current_ability, :read)
+        if @stock_locations.empty?
+          flash[:error] = Spree.t(:stock_management_requires_a_stock_location)
+          redirect_to admin_stock_locations_path
+        end
       end
 
       def stock
@@ -99,7 +115,7 @@ module Spree
 
           params[:q][:s] ||= "name asc"
           @collection = super
-          @collection = @collection.with_deleted if params[:q].delete(:deleted_at_null) == '0'
+          @collection = @collection.with_deleted if params[:q][:deleted_at_null] == '0'
           # @search needs to be defined as this is passed to search_form_for
           @search = @collection.ransack(params[:q])
           @collection = @search.result.

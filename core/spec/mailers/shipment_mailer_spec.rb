@@ -53,7 +53,7 @@ describe Spree::ShipmentMailer do
 
         specify do
           shipped_email = Spree::ShipmentMailer.shipped_email(shipment)
-          expect(shipped_email).to have_body_text("Caro Cliente,")
+          shipped_email.body.should include("Caro Cliente,")
         end
       end
     end

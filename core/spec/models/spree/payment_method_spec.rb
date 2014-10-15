@@ -3,7 +3,6 @@ require 'spec_helper'
 describe Spree::PaymentMethod do
   describe "#available" do
     before do
-      Spree::PaymentMethod.destroy_all # TODO data is leaking between specs as database_cleaner or rspec 3 was broken in Rails 4.1.6 & 4.0.10
       [nil, 'both', 'front_end', 'back_end'].each do |display_on|
         Spree::Gateway::Test.create(
           :name => 'Display Both',
@@ -57,7 +56,7 @@ describe Spree::PaymentMethod do
 
         it 'should be false' do
           gateway.auto_capture.should be_nil
-          subject.should be false
+          subject.should be_false
         end
       end
 
@@ -66,7 +65,7 @@ describe Spree::PaymentMethod do
 
         it 'should be true' do
           gateway.auto_capture.should be_nil
-          subject.should be true
+          subject.should be_true
         end
       end
     end
@@ -80,7 +79,7 @@ describe Spree::PaymentMethod do
         let(:auto_capture) { true }
 
         it 'should be true' do
-          subject.should be true
+          subject.should be_true
         end
       end
 
@@ -88,7 +87,7 @@ describe Spree::PaymentMethod do
         let(:auto_capture) { false }
 
         it 'should be true' do
-          subject.should be false
+          subject.should be_false
         end
       end
     end

@@ -46,10 +46,6 @@ module Spree
       Spree::ShippingMethod.unscoped { super }
     end
 
-    def shipping_method_code
-      shipping_method.code
-    end
-
     def tax_rate
       Spree::TaxRate.unscoped { super }
     end

@@ -1,0 +1,7 @@
+<ul class="toolbar inline-menu" data-hook="toolbar-product-images">
+  <li><%= link_to_with_icon('plus', Spree.t(:new_image), new_admin_product_image_url(@product), :id => 'new_image_link', :class => 'button') %></li>
+</ul>
+
+<div id="images" data-hook></div>
+
+<%= render :partial => "spree/admin/products/images_table", locals: {f: f}, :formats => [:html], :handlers => [:erb] %>

@@ -59,7 +59,7 @@ module Spree
 
         def find_order
           @order = Spree::Order.find_by(number: order_id)
-          authorize! :read, @order, order_token
+          authorize! :read, @order
         end
 
         def find_payment

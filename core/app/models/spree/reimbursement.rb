@@ -3,7 +3,7 @@ module Spree
     class IncompleteReimbursement < StandardError; end
 
     belongs_to :order, inverse_of: :reimbursements
-    belongs_to :customer_return, inverse_of: :reimbursements, touch: true
+    belongs_to :customer_return, inverse_of: :reimbursements
 
     has_many :refunds, inverse_of: :reimbursement
     has_many :credits, inverse_of: :reimbursement, class_name: 'Spree::Reimbursement::Credit'
@@ -142,7 +142,7 @@ module Spree
     end
 
     def send_reimbursement_email
-      Spree::ReimbursementMailer.reimbursement_email(self.id).deliver
+      Spree::ReimbursementMailer.reimbursement_email(self).deliver
     end
   end
 end

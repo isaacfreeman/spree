@@ -36,16 +36,6 @@ describe Spree::Promotion do
     end
   end
 
-  describe ".applied" do
-    it "scopes promotions that have been applied to an order only" do
-      promotion = Spree::Promotion.create! name: "test", code: ''
-      expect(Spree::Promotion.applied).to be_empty
-
-      promotion.orders << create(:order)
-      expect(Spree::Promotion.applied.first).to eq promotion
-    end
-  end
-
   describe ".advertised" do
     let(:promotion) { create(:promotion) }
     let(:advertised_promotion) { create(:promotion, :advertise => true) }
@@ -131,14 +121,14 @@ describe Spree::Promotion do
     it "does activate if newer then order" do
       @action1.should_receive(:perform).with(@payload)
       promotion.created_at = DateTime.now + 2
-      expect(promotion.activate(@payload)).to be true
+      expect(promotion.activate(@payload)).to be_true
     end
 
     context "keeps track of the orders" do
       context "when activated" do
         it "assigns the order" do
           expect(promotion.orders).to be_empty
-          expect(promotion.activate(@payload)).to be true
+          expect(promotion.activate(@payload)).to be_true
           expect(promotion.orders.first).to eql @order
         end
       end
@@ -146,7 +136,7 @@ describe Spree::Promotion do
         it "will not assign the order" do
           @order.state = 'complete'
           expect(promotion.orders).to be_empty
-          expect(promotion.activate(@payload)).to be_falsey
+          expect(promotion.activate(@payload)).to be_false
           expect(promotion.orders).to be_empty
         end
       end
@@ -159,16 +149,16 @@ describe Spree::Promotion do
     let(:promotable) { double('Promotable') }
     it "should not have its usage limit exceeded with no usage limit" do
       promotion.usage_limit = 0
-      promotion.usage_limit_exceeded?(promotable).should be false
+      promotion.usage_limit_exceeded?(promotable).should be_false
     end
 
     it "should have its usage limit exceeded" do
       promotion.usage_limit = 2
       promotion.stub(:adjusted_credits_count => 2)
-      promotion.usage_limit_exceeded?(promotable).should be true
+      promotion.usage_limit_exceeded?(promotable).should be_true
 
       promotion.stub(:adjusted_credits_count => 3)
-      promotion.usage_limit_exceeded?(promotable).should be true
+      promotion.usage_limit_exceeded?(promotable).should be_true
     end
   end
 
@@ -480,9 +470,9 @@ describe Spree::Promotion do
     subject { promotion.used_by? user, [excluded_order] }
 
     let(:promotion) { Spree::Promotion.create! name: 'Test Used By' }
-    let(:user) { create :user }
+    let(:user) { double Spree::LegacyUser, id: 2 }
     let(:order) { create :completed_order_with_totals }
-    let(:excluded_order) { create :completed_order_with_totals }
+    let(:excluded_order) { double Spree::Order, id: 3}
 
     before { promotion.orders << order }
 
@@ -507,7 +497,7 @@ describe Spree::Promotion do
       end
     end
 
-    context 'when the user has not used this promo' do
+    context 'when the user nas not used this promo' do
       it { should be false }
     end
   end

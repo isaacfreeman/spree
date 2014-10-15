@@ -5,7 +5,7 @@ module Spree
       new_action.before :new_before
       before_action :load_data, only: [:new, :create, :edit, :update]
 
-      # override the destroy method to set deleted_at value
+      # override the destory method to set deleted_at value
       # instead of actually deleting the product.
       def destroy
         @variant = Variant.find(params[:id])
@@ -18,6 +18,15 @@ module Spree
         respond_with(@variant) do |format|
           format.html { redirect_to admin_product_variants_url(params[:product_id]) }
           format.js  { render_js_for_destroy }
+        end
+      end
+
+      def index
+        @tax_categories = TaxCategory.order(:name)
+        respond_with(@collection) do |format|
+          if request.xhr?
+            format.html { render partial: 'spree/admin/products/variants_table', :layout => false }
+          end
         end
       end
 

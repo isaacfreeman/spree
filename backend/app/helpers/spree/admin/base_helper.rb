@@ -142,8 +142,10 @@ module Spree
 
       def link_to_add_fields(name, target, options = {})
         name = '' if options[:no_text]
+        element_tag = options[:element_tag] || 'tr'
         css_classes = options[:class] ? options[:class] + " spree_add_fields" : "spree_add_fields"
-        link_to_with_icon('plus', name, 'javascript:', :data => { :target => target }, :class => css_classes)
+        css_id = options[:id]
+        link_to_with_icon('plus', name, 'javascript:', :data => { :target => target, :elementTag => element_tag }, :class => css_classes, :id => css_id)
       end
 
       # renders hidden field and link to remove record using nested_attributes
@@ -157,12 +159,6 @@ module Spree
 
       def spree_dom_id(record)
         dom_id(record, 'spree')
-      end
-
-      def rails_environments
-        @@rails_environments ||= Dir.glob("#{Rails.root}/config/environments/*.rb")
-                                    .map { |f| File.basename(f, ".rb") }
-                                    .sort
       end
 
       private

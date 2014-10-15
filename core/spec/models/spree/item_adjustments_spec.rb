@@ -132,20 +132,6 @@ module Spree
         line_item.adjustments.promotion.eligible.first.label.should == 'Promotion C'
       end
 
-      it "should choose the most recent promotion adjustment when amounts are equal" do
-        # Using Timecop is a regression test
-        Timecop.freeze do
-          create_adjustment("Promotion A", -200)
-          create_adjustment("Promotion B", -200)
-        end
-        line_item.adjustments.each {|a| a.update_column(:eligible, true)}
-
-        subject.choose_best_promotion_adjustment
-
-        line_item.adjustments.promotion.eligible.count.should == 1
-        line_item.adjustments.promotion.eligible.first.label.should == 'Promotion B'
-      end
-
       context "when previously ineligible promotions become available" do
         let(:order_promo1) { create(:promotion, :with_order_adjustment, :with_item_total_rule, weighted_order_adjustment_amount: 5, item_total_threshold_amount: 10) }
         let(:order_promo2) { create(:promotion, :with_order_adjustment, :with_item_total_rule, weighted_order_adjustment_amount: 10, item_total_threshold_amount: 20) }
@@ -255,7 +241,7 @@ module Spree
           @before_tax_adjustments_called = true
         end
 
-        set_callback :tax_adjustments, :after do |object|
+        set_callback :promo_adjustments, :after do |object|
           @after_tax_adjustments_called = true
         end
       end
@@ -263,10 +249,10 @@ module Spree
 
       it "calls all the callbacks" do
         subject.update_adjustments
-        expect(subject.before_promo_adjustments_called).to be true
-        expect(subject.after_promo_adjustments_called).to be true
-        expect(subject.before_tax_adjustments_called).to be true
-        expect(subject.after_tax_adjustments_called).to be true
+        expect(subject.before_promo_adjustments_called).to be_true
+        expect(subject.after_promo_adjustments_called).to be_true
+        expect(subject.before_tax_adjustments_called).to be_true
+        expect(subject.after_tax_adjustments_called).to be_true
       end
     end
   end

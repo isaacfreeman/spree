@@ -64,7 +64,7 @@ module Spree
         credit_card_payment_method = create(:credit_card_payment_method)
         attributes = {
           :payments_attributes => [
-            {
+            { 
               :payment_method_id => credit_card_payment_method.id,
               :source_attributes => {
                 :name => "Ryan Bigg",
@@ -95,18 +95,11 @@ module Spree
 
     context "#process_payments!" do
       let(:payment) { stub_model(Spree::Payment) }
-      before { order.stub unprocessed_payments: [payment], total: 10 }
+      before { order.stub :unprocessed_payments => [payment], :total => 10 }
 
       it "should process the payments" do
         payment.should_receive(:process!)
-        expect(order.process_payments!).to be_truthy
-      end
-
-      # Regression spec for https://github.com/spree/spree/issues/5436
-      it 'should raise an error if there are no payments to process' do
-        order.stub unprocessed_payments: []
-        expect(payment).to_not receive(:process!)
-        expect(order.process_payments!).to be_falsey
+        order.process_payments!.should be_true
       end
 
       context "when a payment raises a GatewayError" do
@@ -114,40 +107,14 @@ module Spree
 
         it "should return true when configured to allow checkout on gateway failures" do
           Spree::Config.set :allow_checkout_on_gateway_error => true
-          order.process_payments!.should be true
+          order.process_payments!.should be_true
         end
 
         it "should return false when not configured to allow checkout on gateway failures" do
           Spree::Config.set :allow_checkout_on_gateway_error => false
-          order.process_payments!.should be false
+          order.process_payments!.should be_false
         end
       end
-    end
-
-    context "#authorize_payments!" do
-      let(:payment) { stub_model(Spree::Payment) }
-      before { order.stub :unprocessed_payments => [payment], :total => 10 }
-      subject { order.authorize_payments! }
-
-      it "processes payments with attempt_authorization!" do
-        expect(payment).to receive(:authorize!)
-        subject
-      end
-
-      it { should be_truthy }
-    end
-
-    context "#capture_payments!" do
-      let(:payment) { stub_model(Spree::Payment) }
-      before { order.stub :unprocessed_payments => [payment], :total => 10 }
-      subject { order.capture_payments! }
-
-      it "processes payments with attempt_authorization!" do
-        expect(payment).to receive(:purchase!)
-        subject
-      end
-
-      it { should be_truthy }
     end
 
     context "#outstanding_balance" do
@@ -167,29 +134,29 @@ module Spree
       it "should be true when total greater than payment_total" do
         order.total = 10.10
         order.payment_total = 9.50
-        order.outstanding_balance?.should be true
+        order.outstanding_balance?.should be_true
       end
       it "should be true when total less than payment_total" do
         order.total = 8.25
         order.payment_total = 10.44
-        order.outstanding_balance?.should be true
+        order.outstanding_balance?.should be_true
       end
       it "should be false when total equals payment_total" do
         order.total = 10.10
         order.payment_total = 10.10
-        order.outstanding_balance?.should be false
+        order.outstanding_balance?.should be_false
       end
     end
 
     context "payment required?" do
       context "total is zero" do
         before { order.stub(total: 0) }
-        it { order.payment_required?.should be false }
+        it { order.payment_required?.should be_false }
       end
 
       context "total > zero" do
         before { order.stub(total: 1) }
-        it { order.payment_required?.should be true }
+        it { order.payment_required?.should be_true }
       end
     end
   end

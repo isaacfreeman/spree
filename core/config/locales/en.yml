@@ -53,7 +53,6 @@ en:
         special_instructions: Special Instructions
         state: State
         total: Total
-        considered_risky: Risky
       spree/order/bill_address:
         address1: Billing address street
         city: Billing address city
@@ -487,7 +486,6 @@ en:
     back_to_users_list: Back To Users List
     back_to_zones_list: Back To Zones List
     backorderable: Backorderable
-    backorderable_default: Backorderable default
     backorders_allowed: backorders allowed
     balance_due: Balance Due
     base_amount: Base Amount
@@ -500,8 +498,6 @@ en:
     calculator: Calculator
     calculator_settings_warning: If you are changing the calculator type, you must save first before you can edit the calculator settings
     cancel: cancel
-    canceler: Canceler
-    canceled_at: Canceled at
     cannot_create_payment_without_payment_methods: You cannot create a payment for an order without any payment methods defined.
     cannot_create_customer_returns: Cannot create customer returns as this order has no shipped units.
     cannot_create_returns: Cannot create returns as this order has no shipped units.
@@ -528,7 +524,7 @@ en:
     choose_dashboard_locale: Choose Dashboard Locale
     choose_location: Choose location
     city: City
-    click_and_drag_on_the_products_to_sort_them: Click and drag on the products to sort them.
+    click_and_drag_on_the_products_to_sort_them: 'Click &amp; drag on the products to sort them.'
     clone: Clone
     close: Close
     close_all_adjustments: Close All Adjustments
@@ -575,7 +571,6 @@ en:
     create_reimbursement: Create reimbursement
     created_at: Created At
     credit: Credit
-    credits: Credits
     credit_card: Credit Card
     credit_cards: Credit Cards
     credit_owed: Credit Owed
@@ -628,7 +623,7 @@ en:
     editing_payment_method: Editing Payment Method
     editing_product: Editing Product
     editing_promotion: Editing Promotion
-    editing_promotion_category: Editing Promotion Category
+    editing_promotion_category: Editing Promotion
     editing_property: Editing Property
     editing_prototype: Editing Prototype
     edit_refund_reason: Edit Refund Reason
@@ -651,8 +646,6 @@ en:
         has_excluded_product: Your cart contains a product that prevents this coupon code from being applied.
         item_total_less_than: This coupon code can't be applied to orders less than %{amount}.
         item_total_less_than_or_equal: This coupon code can't be applied to orders less than or equal to %{amount}.
-        item_total_more_than: This coupon code can't be applied to orders higher than %{amount}.
-        item_total_more_than_or_equal: This coupon code can't be applied to orders higher than or equal to %{amount}.
         limit_once_per_user: This coupon code can only be used once per user.
         missing_product: This coupon code can't be applied because you don't have all of the necessary products in your cart.
         missing_taxon: You need to add a product from all applicable categories before applying this coupon code.
@@ -750,10 +743,6 @@ en:
     included_in_price: Included in Price
     included_price_validation: cannot be selected unless you have set a Default Tax Zone
     incomplete: Incomplete
-    info_product_has_multiple_skus: "This product has %{count} variants:"
-    info_number_of_skus_not_shown:
-      one: "and one other"
-      other: "and %{count} others"
     instructions_to_reset_password: Please enter your email on the form below
     insufficient_stock: Insufficient stock available, only %{on_hand} remaining
     insufficient_stock_lines_present: Some line items in this order have insufficient quantity.
@@ -777,8 +766,6 @@ en:
       operators:
         gt: greater than
         gte: greater than or equal to
-        lt: less than
-        lte: less than or equal to
     items_cannot_be_shipped: We are unable to calculate shipping rates for the selected items.
     items_in_rmas: Items in Return Authorizations
     items_to_be_reimbursed: Items to be reimbursed
@@ -817,7 +804,6 @@ en:
     make_sure_the_above_reimbursement_amount_is_correct: Make sure the above reimbursement amount is correct
     manage_promotion_categories: Manage Promotion Categories
     manual_intervention_required: Manual intervention required
-    manage_variants: Manage Variants
     master_price: Master Price
     match_choices:
       all: All
@@ -827,7 +813,6 @@ en:
     memo: Memo
     meta_description: Meta Description
     meta_keywords: Meta Keywords
-    meta_title: Meta Title
     metadata: Metadata
     minimal_amount: Minimal Amount
     month: Month
@@ -931,16 +916,16 @@ en:
         instructions: Your order has been CANCELED.  Please retain this cancellation information for your records.
         order_summary_canceled: Order Summary [CANCELED]
         subject: Cancellation of Order
-        subtotal: ! 'Subtotal:'
-        total: ! 'Order Total:'
+        subtotal: ! 'Subtotal: %{subtotal}'
+        total: ! 'Order Total: %{total}'
       confirm_email:
         dear_customer: Dear Customer,
         instructions: Please review and retain the following order information for your records.
         order_summary: Order Summary
         subject: Order Confirmation
-        subtotal: ! 'Subtotal:'
+        subtotal: ! 'Subtotal: %{subtotal}'
         thanks: Thank you for your business.
-        total: ! 'Order Total:'
+        total: ! 'Order Total: %{total}'
     order_not_found: We couldn't find your order. Please try that action again.
     order_number: Order %{number}
     order_populator:
@@ -1084,7 +1069,6 @@ en:
         name: Taxon(s)
     promotions: Promotions
     promotion_uses: Promotion uses
-    propagate_all_variants: Propagate all variants
     properties: Properties
     property: Property
     prototype: Prototype
@@ -1229,10 +1213,8 @@ en:
     show_active: Show Active
     show_deleted: Show Deleted
     show_only_complete_orders: Only show complete orders
-    show_only_considered_risky: Only show risky orders
     show_rate_in_label: Show rate in label
     sku: SKU
-    skus: SKUs
     slug: Slug
     source: Source
     special_instructions: Special Instructions
@@ -1273,7 +1255,6 @@ en:
     tax_included: "Tax (incl.)"
     tax_categories: Tax Categories
     tax_category: Tax Category
-    tax_code: Tax Code
     tax_rate_amount_explanation: Tax rates are a decimal amount to aid in calculations, (i.e. if the tax rate is 5% then enter 0.05)
     tax_rates: Tax Rates
     taxon: Taxon
@@ -1344,7 +1325,7 @@ en:
     validation:
       unpaid_amount_not_zero: "Amount was not fully reimbursed. Still due: %{amount}"
       cannot_be_less_than_shipped_units: cannot be less than the number of shipped units.
-      cannot_destroy_line_item_as_inventory_units_have_shipped: Cannot destroy line item as some inventory units have shipped.
+      cannot_destory_line_item_as_inventory_units_have_shipped: Cannot destory line item as some inventory units have shipped.
       exceeds_available_stock: exceeds available stock. Please ensure line items have a valid quantity.
       is_too_large: is too large -- stock on hand cannot cover requested quantity!
       must_be_int: must be an integer

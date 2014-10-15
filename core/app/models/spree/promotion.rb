@@ -28,10 +28,6 @@ module Spree
 
     scope :coupons, ->{ where("#{table_name}.code IS NOT NULL") }
 
-    order_join_table = reflect_on_association(:orders).join_table
-
-    scope :applied, -> { joins("INNER JOIN #{order_join_table} ON #{order_join_table}.promotion_id = #{table_name}.id").uniq }
-
     def self.advertised
       where(advertise: true)
     end

@@ -41,26 +41,14 @@ describe Spree::Product do
     end
 
     context "master variant" do
-
       context "when master variant changed" do
         before do
           product.master.sku = "Something changed"
         end
 
         it "saves the master" do
-          product.master.should_receive(:save!)
+          product.master.should_receive(:save)
           product.save
-        end
-      end
-
-      context "when master variant is not valid" do
-        let(:other_product){ create(:product, sku: "TEST") }
-        before do
-          product.master.sku = other_product.sku
-        end
-
-        it "should not be saved" do
-          expect { product.save! }.to raise_error
         end
       end
 
@@ -71,7 +59,7 @@ describe Spree::Product do
         end
 
         it "saves the master" do
-          product.master.should_receive(:save!)
+          product.master.should_receive(:save)
           product.save
         end
 
@@ -92,7 +80,7 @@ describe Spree::Product do
         end
 
         it "saves the master" do
-          product.master.should_receive(:save!)
+          product.master.should_receive(:save)
           product.save
         end
 
@@ -104,7 +92,7 @@ describe Spree::Product do
 
       context "when master variant and price haven't changed" do
         it "does not save the master" do
-          product.master.should_not_receive(:save!)
+          product.master.should_not_receive(:save)
           product.save
         end
       end
@@ -129,7 +117,7 @@ describe Spree::Product do
         it "should set deleted_at value" do
           product.destroy
           product.deleted_at.should_not be_nil
-          product.variants_including_master.all? { |v| !v.deleted_at.nil? }.should be true
+          product.variants_including_master.all? { |v| !v.deleted_at.nil? }.should be_true
         end
       end
     end
@@ -233,7 +221,7 @@ describe Spree::Product do
     # Regression test for #3737
     context "has stock items" do
       let(:product) { create(:product) }
-      it "can retrieve stock items" do
+      it "can retreive stock items" do
         product.master.stock_items.first.should_not be_nil
         product.stock_items.first.should_not be_nil
       end

@@ -42,31 +42,31 @@ describe Spree::CreditCard do
   context "#can_capture?" do
     it "should be true if payment is pending" do
       payment = mock_model(Spree::Payment, pending?: true, created_at: Time.now)
-      credit_card.can_capture?(payment).should be true
+      credit_card.can_capture?(payment).should be_true
     end
 
     it "should be true if payment is checkout" do
       payment = mock_model(Spree::Payment, pending?: false, checkout?: true, created_at: Time.now)
-      credit_card.can_capture?(payment).should be true
+      credit_card.can_capture?(payment).should be_true
     end
   end
 
   context "#can_void?" do
     it "should be true if payment is not void" do
       payment = mock_model(Spree::Payment, failed?: false, void?: false)
-      credit_card.can_void?(payment).should be true
+      credit_card.can_void?(payment).should be_true
     end
   end
 
   context "#can_credit?" do
     it "should be false if payment is not completed" do
       payment = mock_model(Spree::Payment, completed?: false)
-      credit_card.can_credit?(payment).should be false
+      credit_card.can_credit?(payment).should be_false
     end
 
     it "should be false when credit_allowed is zero" do
       payment = mock_model(Spree::Payment, completed?: true, credit_allowed: 0, order: mock_model(Spree::Order, payment_state: 'credit_owed'))
-      credit_card.can_credit?(payment).should be false
+      credit_card.can_credit?(payment).should be_false
     end
   end
 
@@ -101,13 +101,6 @@ describe Spree::CreditCard do
       credit_card.year = 1.month.ago.year
       credit_card.should_not be_valid
       credit_card.errors[:base].should == ["Card has expired"]
-    end
-
-    it "should not be expired expiring on the current month" do
-      credit_card.attributes = valid_credit_card_attributes
-      credit_card.month = Time.zone.now.month
-      credit_card.year = Time.zone.now.year
-      credit_card.should be_valid
     end
 
     it "should handle TZ correctly" do
@@ -367,14 +360,5 @@ describe Spree::CreditCard do
 
     first.reload.default.should eq true
     second.reload.default.should eq true
-  end
-
-  it 'allows this card to save even if the previously default card has expired' do
-    user = FactoryGirl.create(:user)
-    first = FactoryGirl.create(:credit_card, user: user, default: true)
-    second = FactoryGirl.create(:credit_card, user: user, default: false)
-    first.update_columns(year: DateTime.now.year, month: 1.month.ago.month)
-
-    expect { second.update_attributes!(default: true) }.not_to raise_error
   end
 end
