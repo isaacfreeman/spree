@@ -19,6 +19,15 @@ module Spree
       end
 
       def update
+        @variants = @product.variants
+        @variants = [@product.master] if @variants.empty?
+        @variant_images = @product.variant_images
+        @stock_locations = StockLocation.accessible_by(current_ability, :read)
+        if @stock_locations.empty?
+          flash[:error] = Spree.t(:stock_management_requires_a_stock_location)
+          redirect_to admin_stock_locations_path
+        end
+
         if params[:product][:taxon_ids].present?
           params[:product][:taxon_ids] = params[:product][:taxon_ids].split(',')
         end

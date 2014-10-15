@@ -300,3 +300,25 @@ table.grouped_rows#variants {
     }
   }
 }
+
+table.grouped_rows#images {
+  tbody {
+    &.remove {
+      td {
+        background: $color-action-remove-bg;
+        border-top: solid 1px $color-action-remove-brd;
+        border-bottom: solid 1px $color-action-remove-brd;
+        border-right: solid 1px $color-action-remove-brd;
+        text-decoration: line-through;
+        &:first-child {
+          border-left: solid 1px $color-action-remove-brd;
+          border-right: none;
+        }
+      }
+      td.actions {
+        background: none;
+        text-decoration: none;
+      }
+    }
+  }
+}

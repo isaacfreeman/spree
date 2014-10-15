@@ -202,6 +202,10 @@ $(document).ready(function(){
     event.preventDefault();
     toggleDestroyMarker($(this).closest('.variant'));
   });
+  $('body').on('click', '#images .image .show .delete-image', function(event) {
+    event.preventDefault();
+    toggleDestroyMarker($(this).closest('.image'));
+  });
   $('body').on('change', '#variants .variant .edit input', function(event) {
     updateShowElementFromInput($(this));
   });

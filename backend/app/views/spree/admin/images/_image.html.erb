@@ -1,8 +1,6 @@
 <tbody id="<%= spree_dom_id image %>" data-hook="images_row" class="image <%= cycle('odd', 'even')%>">
   <%= f.fields_for :variant_images, image do |imf| %>
 
-    <%= imf.object_name %>
-
     <tr class="show">
       <td class="no-border">
         <span class="handle"></span>
@@ -16,21 +14,19 @@
       <% end %>
       <td><%= image.alt %></td>
       <td class="actions">
-        <%# unless variant.deleted? %>
-          <%= link_to_with_icon('edit',
-                                Spree.t(:edit),
-                                image.new_record? ? '#' : edit_admin_product_image_url(@product, image),
-                                :no_text => true,
-                                :data => {:action => 'edit'}
-                               ) %>
-          <%#= link_to_with_icon('trash',
-                                Spree.t(:delete),
-                                admin_product_image_url(@product, image),
-                                :no_text => true,
-                                :class => "delete-image"
-                               ) unless image.deleted? || image.new_record? %>
-          <%#= imf.check_box '_destroy', :value => false, :class => 'destroy_marker', :style => 'display: none;' %>
-        <%# end %>
+        <%= link_to_with_icon('edit',
+                              Spree.t(:edit),
+                              image.new_record? ? '#' : edit_admin_product_image_url(@product, image),
+                              :no_text => true,
+                              :data => {:action => 'edit'}
+                             ) %>
+        <%= link_to_with_icon('trash',
+                              Spree.t(:delete),
+                              admin_product_image_url(@product, image),
+                              :no_text => true,
+                              :class => "delete-image"
+                             ) %>
+        <%= imf.check_box '_destroy', :value => false, :class => 'destroy_marker', :style => 'display: none;' %>
       </td>
 
     </tr>
@@ -48,7 +44,7 @@
       <td>
         <div data-hook="variant" class="field">
           <%= imf.label :viewable_id, Spree::Variant.model_name.human %><br>
-          <%= imf.select :viewable_id, @variants, {}, {:class => 'select2 fullwidth'} %>
+          <%= imf.select :viewable_id, [[Spree.t(:all), @product.master.id]] + @variants.map{|v| [v.sku_and_options_text, v.id]}, {}, {:class => 'select2 fullwidth'} %>
         </div>
       </td>
       <td data-hook="alt_text" class="field">
