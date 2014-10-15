@@ -72,6 +72,7 @@ module Spree
       def edit
         @variants = @product.variants
         @variants = [@product.master] if @variants.empty?
+        @variant_images = @product.variant_images
         @properties = Spree::Property.pluck(:name)
         @product.product_properties.build
         @stock_locations = StockLocation.accessible_by(current_ability, :read)
