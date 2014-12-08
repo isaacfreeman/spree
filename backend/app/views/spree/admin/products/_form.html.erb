@@ -45,6 +45,8 @@
           <%= f.text_field :available_on, :value => datepicker_field_value(@product.available_on), :class => 'datepicker' %>
         <% end %>
       </div>
+    </div>
+  </fieldset>
 
       <div data-hook="admin_product_form_shipping_categories">
         <%= f.field_container :shipping_categories do %>

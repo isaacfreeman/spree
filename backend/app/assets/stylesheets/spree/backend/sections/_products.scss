@@ -55,6 +55,94 @@ form.edit_product .inline-menu {
   }
 }
 
+#variants {
+  thead {
+    th.option_types {
+      border-bottom: none
+    }
+    th.option_type {
+      border-left: none;
+      border-right: none;
+      border-top: none;
+      &:last-child {
+        border-right: 1px solid #cee1f4;
+      }
+    }
+  }
+  tbody.variant {
+    &.even tr td {
+      background-color: $color-tbl-even;
+      img {
+        border: 1px solid very-light($color-3, 6);
+      }
+    }
+    &:last-child td {
+      border-bottom: 1px solid $color-border;
+    }
+    td {
+      border-bottom: none;
+    }
+    td.sku label,
+    td.option_value label {
+      display: none;
+    }
+    td.option_value {
+      text-align: center;
+    }
+    tr.edit {
+      td {
+        vertical-align: top;
+        border-right: none;
+        border-top: 1px solid $color-border;
+        &:nth-child(6) {
+          border-right: 1px solid $color-border;
+        }
+      }
+    }
+    &.remove {
+      td {
+        background: $color-action-remove-bg;
+        border-top: solid 1px $color-action-remove-brd;
+        border-bottom: solid 1px $color-action-remove-brd;
+        border-right: solid 1px $color-action-remove-brd;
+        text-decoration: line-through;
+        &:first-child {
+          border-left: solid 1px $color-action-remove-brd;
+          border-right: none;
+        }
+      }
+      td.actions {
+        background: none;
+        text-decoration: none;
+      }
+    }
+  }
+  tbody.ui-sortable-placeholder {
+    display: table-row;
+    td {
+      border: 1px solid $color-2 !important;
+      visibility: visible !important;
+
+      &.actions {
+        background-color: transparent;
+        border: none !important;
+        border-left: 1px solid $color-2 !important;
+      }
+    }
+  }
+  tbody.ui-sortable-helper {
+    display: table;
+    td {
+      background-color: lighten($color-3, 33);
+      border-bottom: 1px solid $color-border;
+
+      &.actions {
+        display: none;
+      }
+    }
+  }
+}
+
 #listing_product_stock {
   > tbody {
     > tr {
