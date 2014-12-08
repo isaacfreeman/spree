@@ -104,6 +104,10 @@ module Spree
       variants.any?
     end
 
+    def has_properties?
+      properties.any?
+    end
+
     def has_images?
       variant_images.any?
     end

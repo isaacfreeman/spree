@@ -56,56 +56,62 @@
     </div>
   </fieldset>
 
-  <div id="admin_product_form_controls" class="sixteen columns alpha omega clearfix" data-hook="admin_product_form_master_variant">
-    <ul class="toolbar inline-menu" data-hook="toolbar-product-properties">
-      <% if can?(:admin, Spree::ProductProperty) %>
+  <fieldset id="admin_product_form_master_variant" style="<%= 'display:none;' if @product.has_variants? %>" class="sixteen columns alpha omega clearfix" data-hook="admin_product_form_master_variant">
+    <legend><%= icon('th-large') %>Master Variant</legend>
+    <ul class="toolbar inline-menu fieldset-menu" data-hook="toolbar-product-properties">
+      <% if can?(:admin, Spree::Variant) %>
         <li>
-          <%= button_link_to 'Manage Properties', admin_product_product_properties_url(@product), :icon => 'tasks', id: 'manage_properties' %>
+          <%= button_link_to 'Manage Variants',  admin_product_variants_url(@product), :icon => 'th-large', id: 'add_variants' %>
         </li>
       <% end %>
     </ul>
-  </div>
-
-  <fieldset id="admin_product_form_product_properties" style="display:none;" class="sixteen columns alpha omega clearfix" data-hook="admin_product_form_product_properties">
-    <legend><%= icon('th-large') %>Properties</legend>
-    <%= render partial: "spree/admin/products/product_properties", locals: {f: f} %>
-  </fieldset>
-
-  <fieldset id="admin_product_form_master_variant" style="<%= 'display:none;' if @product.has_variants? %>" class="sixteen columns alpha omega clearfix" data-hook="admin_product_form_master_variant">
-    <div id="admin_product_master_variant_controls" class="sixteen columns alpha omega clearfix" data-hook="admin_product_form_master_variant">
-      <ul class="toolbar inline-menu" data-hook="toolbar-product-properties">
-        <% if can?(:admin, Spree::Variant) %>
-          <li>
-            <%= button_link_to 'Manage Variants',  admin_product_variants_url(@product), :icon => 'th-large', id: 'add_variants' %>
-          </li>
-        <% end %>
-      </ul>
-    </div>
     <%= render partial: "spree/admin/variants/master_variant_fields", locals: {f: f} %>
   </fieldset>
 
   <% if can?(:admin, Spree::Variant) %>
     <fieldset id="admin_product_form_multiple_variants" style="<%= 'display:none;' unless @product.has_variants? %>" class="sixteen columns alpha omega clearfix" data-hook="admin_product_form_multiple_variants">
-      <legend><%= icon('th-large') %>Variants</legend>
-
-      <div id="admin_product_multiple_variants_controls" class="sixteen columns alpha omega clearfix" data-hook="admin_product_form_master_variant">
-        <ul class="toolbar inline-menu" data-hook="toolbar-product-properties">
-          <% if can?(:admin, Spree::Variant) %>
-            <li>
-              <%= button_link_to 'Single Master Variant',  admin_product_variants_url(@product), :icon => 'th-large', id: 'add_variants' %>
-            </li>
-          <% end %>
-        </ul>
-      </div>
+      <legend>
+        <%= icon('th-large') %>Variants
+      </legend>
+      <ul class="toolbar inline-menu fieldset-menu" data-hook="toolbar-product-properties">
+        <% if can?(:admin, Spree::Variant) %>
+        <li>
+          <%= button_link_to 'Master Variant',  admin_product_variants_url(@product), :icon => 'th-large', id: 'add_variants' %>
+        </li>
+        <% end %>
+      </ul>
 
       <%= render partial: "spree/admin/products/option_types", locals: {f: f} %>
       <%= render partial: "spree/admin/products/variants", locals: {f: f} %>
     </fieldset>
   <% end %>
 
+  <fieldset id="admin_product_form_product_properties" class="sixteen columns alpha omega clearfix" data-hook="admin_product_form_product_properties">
+    <legend><%= icon('th-large') %>Properties</legend>
+    <ul class="toolbar inline-menu fieldset-menu" data-hook="toolbar-product-properties">
+      <% if can?(:admin, Spree::ProductProperty) %>
+      <li>
+        <%= button_link_to 'Manage Properties', admin_product_product_properties_url(@product), :icon => 'tasks', id: 'manage_properties' %>
+      </li>
+      <% end %>
+    </ul>
+    <div class="fields" style="<%= 'display:none;' unless @product.has_properties? %>">
+      <%= render partial: "spree/admin/products/product_properties", locals: {f: f} %>
+    </div>
+  </fieldset>
+
   <fieldset data-hook="admin_product_form_images" class="alpha omega sixteen columns">
     <legend>Images</legend>
-    <%= render partial: "spree/admin/products/images", locals: {f: f} %>
+    <ul class="toolbar inline-menu fieldset-menu" data-hook="toolbar-product-images">
+      <% if can?(:admin, Spree::Image) %>
+      <li>
+        <%= button_link_to 'Manage Images', admin_product_images_url(@product), :icon => 'tasks', id: 'manage_images' %>
+      </li>
+      <% end %>
+    </ul>
+    <div class="fields" style="<%= 'display:none;' unless @product.has_images? %>">
+      <%= render partial: "spree/admin/products/images", locals: {f: f} %>
+    </div>
   </fieldset>
 
   <fieldset data-hook="admin_product_form_stock" class="alpha omega sixteen columns">

@@ -217,7 +217,11 @@ $(document).ready(function(){
   });
   $( "a#manage_properties" ).click(function( event ) {
     event.preventDefault();
-    $( '#admin_product_form_product_properties' ).slideToggle();
+    $( '#admin_product_form_product_properties .fields' ).slideToggle();
+  });
+  $( "a#manage_images" ).click(function( event ) {
+    event.preventDefault();
+    $( '#admin_product_form_product_images .fields' ).slideToggle();
   });
   $( "a#add_variants" ).click(function( event ) {
     event.preventDefault();
