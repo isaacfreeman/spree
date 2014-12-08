@@ -7,4 +7,4 @@
   </li>
 </ul>
 
-<%= render :partial => "spree/admin/products/variants_table", :formats => [:html], :handlers => [:erb] %>
+<%= render :partial => "spree/admin/products/variants_table", locals: {f: f}, :formats => [:html], :handlers => [:erb] %>

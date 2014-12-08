@@ -1,36 +1,34 @@
-<%= form_for [:admin, @product], :method => :put, :html => { :multipart => true } do |f| %>
-  <table id="variants" class="index sortable-variants grouped_rows" data-sortable-link="<%= update_positions_admin_product_variants_path(@product) %>">
-    <colgroup>
+<table id="variants" class="index sortable-variants grouped_rows" data-sortable-link="<%= update_positions_admin_product_variants_path(@product) %>">
+  <colgroup>
+    <col style="width: 10%" />
+    <col style="width: 35%" />
+    <% @product.option_types.each do |option_type| %>
       <col style="width: 10%" />
-      <col style="width: 35%" />
-      <% @product.option_types.each do |option_type| %>
-        <col style="width: 10%" />
-      <% end %>
-      <col style="width: 10%" />
-      <col style="width: 10%" />
-      <col style="width: 15%" />
-    </colgroup>
-    <thead data-hook="variants_header">
-      <tr>
-        <th rowspan="2"></th>
-        <th rowspan="2"><%= Spree.t(:sku) %></th>
-        <% if @product.option_types.any? %>
-          <th colspan="<%= @product.option_types.count %>" class="option_types"><%= Spree.t(:options) %></th>
-        <% end %>
-        <th rowspan="2"><%= Spree.t(:dimensions) %></th>
-        <th rowspan="2"><%= Spree.t(:price) %></th>
-        <th rowspan="2" class="actions"></th>
-      </tr>
-      <tr>
-        <% @product.option_types.each do |option_type| %>
-          <th class="option_type"><%= option_type.presentation %></th>
-        <% end %>
-      </tr>
-    </thead>
-    <% if @product.has_variants? %>
-      <%= render partial: "spree/admin/variants/variant", collection: @variants, locals: {f: f} %>
-    <% else %>
-      <%= render partial: "spree/admin/variants/variant", locals: {f: f, variant: Spree::Variant.new, variant_counter: 0} %>
     <% end %>
-  </table>
-<% end %>
+    <col style="width: 10%" />
+    <col style="width: 10%" />
+    <col style="width: 15%" />
+  </colgroup>
+  <thead data-hook="variants_header">
+    <tr>
+      <th rowspan="2"></th>
+      <th rowspan="2"><%= Spree.t(:sku) %></th>
+      <% if @product.option_types.any? %>
+        <th colspan="<%= @product.option_types.count %>" class="option_types"><%= Spree.t(:options) %></th>
+      <% end %>
+      <th rowspan="2"><%= Spree.t(:dimensions) %></th>
+      <th rowspan="2"><%= Spree.t(:price) %></th>
+      <th rowspan="2" class="actions"></th>
+    </tr>
+    <tr>
+      <% @product.option_types.each do |option_type| %>
+        <th class="option_type"><%= option_type.presentation %></th>
+      <% end %>
+    </tr>
+  </thead>
+  <% if @product.has_variants? %>
+    <%= render partial: "spree/admin/variants/variant", collection: @variants, locals: {f: f} %>
+  <% else %>
+    <%= render partial: "spree/admin/variants/variant", locals: {f: f, variant: Spree::Variant.new, variant_counter: 0} %>
+  <% end %>
+</table>

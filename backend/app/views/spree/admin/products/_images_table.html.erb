@@ -21,13 +21,6 @@
   <% if @variant_images.any? %>
     <%= render partial: "spree/admin/images/image", collection: @variant_images, locals: {f: f} %>
   <% else %>
-    <tbody id="no_images>" data-hook="images_row" class="image <%= cycle('odd', 'even')%>">
-      <tr class="show">
-        <td colspan="4">
-          No images yet
-        </td>
-      </tr>
-    </tbody>
-
+    <%= render partial: "spree/admin/images/image", locals: {f: f, variant: Spree::Image.new, image_counter: 0} %>
   <% end %>
 </table>
