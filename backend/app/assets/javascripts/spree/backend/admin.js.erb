@@ -206,6 +206,15 @@ $(document).ready(function(){
     event.preventDefault();
     toggleDestroyMarker($(this).closest('.image'));
   });
+  $('body').on('change', '#images .image .edit input', function(event) {
+    updateShowElementFromInput($(this));
+  });
+  $('body').on('change', '#images .image .edit select', function(event) {
+    updateShowElementFromInput($(this));
+  });
+  $('body').on('change', '#images .image .edit textarea', function(event) {
+    updateShowElementFromInput($(this));
+  });
   $('body').on('change', '#variants .variant .edit input', function(event) {
     updateShowElementFromInput($(this));
   });
@@ -288,7 +297,7 @@ $(document).ready(function(){
       $(this).html("");
       replaceId($(this), newId);
     });
-    newVariant.find("input, select").each(function () {
+    newVariant.find("input, select, textarea").each(function () {
       $(this).val("");
       replaceId($(this), newId);
       $(this).prop("name", $(this).prop("name").replace(/\d+/, newId))
@@ -307,6 +316,42 @@ $(document).ready(function(){
     $(newVariant).find(".select2").select2();
     $(target).append(newVariant);
     openVariantEdit($(newVariant));
+  })
+
+  $('.spree_add_image').click(function() {
+    var target = $(this).data("target");
+    var elementTag = $(this).data("elementtag");
+    var existingImage = $(target + ' ' + elementTag + ':visible:last')
+    var newImage = existingImage.clone();
+    var newId = new Date().getTime() + (uniqueId++);
+
+    replaceId(newImage, newId);
+    newImage.find(".field-display").each(function () {
+      $(this).html("");
+      replaceId($(this), newId);
+    });
+    newImage.find("input, select, textarea").each(function () {
+      $(this).val("");
+      replaceId($(this), newId);
+      $(this).prop("name", $(this).prop("name").replace(/\d+/, newId))
+    });
+    newImage.find("label").each(function () {
+      $(this).prop("for", $(this).prop("for").replace(/\d+/, newId))
+    });
+    newImage.find(".field-option_value").each(function () {
+      replaceId($(this), newId);
+    });
+    // When cloning a new row, set the href of all icons to be an empty "#"
+    // This is so that clicking on them does not perform the actions for the
+    // duplicated row
+    newImage.find("a").each(function () {
+      $(this).prop('href', '#');
+    });
+    $(newImage).find(".select2").select2('destroy');
+    $(newImage).find('.select2-container ').remove();
+    $(newImage).find(".select2").select2();
+    $(target).append(newImage);
+    openImageEdit($(newImage));
   })
 
   $('body').on('click', '.delete-resource', function() {

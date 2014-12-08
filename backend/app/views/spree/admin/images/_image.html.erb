@@ -6,13 +6,13 @@
         <span class="handle"></span>
         <%= imf.hidden_field :position, :value => image.position, :class => 'position_field' %>
       </td>
-      <td>
+      <td id="show_product_variant_images_attributes_<%= image_counter %>_attachment" class="field-display align-center">
         <%= link_to image_tag(image.attachment.url(:mini)), image.attachment.url(:product) %>
       </td>
       <% if @product.has_variants? %>
-        <td><%= options_text_for(image) %></td>
+        <td id="show_product_variant_images_attributes_<%= image_counter %>_viewable_id" class="field-display"><%= options_text_for(image) %></td>
       <% end %>
-      <td><%= image.alt %></td>
+      <td id="show_product_variant_images_attributes_<%= image_counter %>_alt" class="field-display"><%= image.alt %></td>
       <td class="actions">
         <%= link_to_with_icon('edit',
                               Spree.t(:edit),
@@ -31,8 +31,7 @@
 
     </tr>
 
-    <tr class="edit" style="display: none;"div data-hook="admin_image_form_fields">
-      <%#= render partial: "spree/admin/images/form", locals: {f: imf} %>
+    <tr class="edit" style="display: none;" data-hook="admin_image_form_fields">
       <td></td>
       <td>
         <%= render :partial => 'spree/shared/error_messages', :locals => { :target => image } %>
@@ -41,12 +40,14 @@
           <%= imf.file_field :attachment %>
         </div>
       </td>
-      <td>
-        <div data-hook="variant" class="field">
-          <%= imf.label :viewable_id, Spree::Variant.model_name.human %><br>
-          <%= imf.select :viewable_id, [[Spree.t(:all), @product.master.id]] + @variants.map{|v| [v.sku_and_options_text, v.id]}, {}, {:class => 'select2 fullwidth'} %>
-        </div>
-      </td>
+      <% if @product.has_variants? %>
+        <td>
+          <div data-hook="variant" class="field">
+            <%= imf.label :viewable_id, Spree::Variant.model_name.human %><br>
+            <%= imf.select :viewable_id, [[Spree.t(:all), @product.master.id]] + @variants.map{|v| [v.sku_and_options_text, v.id]}, {}, {:class => 'select2 fullwidth'} %>
+          </div>
+        </td>
+      <% end %>
       <td data-hook="alt_text" class="field">
         <%= imf.label :alt, Spree.t(:alt_text) %><br>
         <%= imf.text_area :alt, :rows => 4, :class => 'fullwidth' %>
