@@ -1,15 +1,16 @@
+<% rows = variant.track_inventory? ? variant.stock_items.count : 1 %>
 <tbody id="<%= spree_dom_id variant %>" <%= 'style="color:red;"' if variant.deleted? %> data-hook="variants_row" class="variant <%= cycle('odd', 'even')%>">
   <%= f.fields_for :variants, variant do |vf| %>
     <tr class="show">
-      <td class="no-border">
+      <td rowspan="<%= rows %>" class="no-border">
         <span class="handle"></span>
         <%= vf.hidden_field :position, :value => variant.position, :class => 'position_field' %>
       </td>
-      <td id="show_product_variants_attributes_<%= variant_counter %>_sku" class="field-display"><%= variant.sku %></td>
+      <td rowspan="<%= rows %>" id="show_product_variants_attributes_<%= variant_counter %>_sku" class="field-display"><%= variant.sku %></td>
       <% @product.option_types.each do |option_type| %>
-        <td id="show_variant_<%= variant_counter %>_option_<%= option_type.name %>" class="option_value field-display"><%= variant.option_value(option_type.name) %></td>
+        <td rowspan="<%= rows %>" id="show_variant_<%= variant_counter %>_option_<%= option_type.name %>" class="option_value field-display"><%= variant.option_value(option_type.name) %></td>
       <% end %>
-      <td>
+      <td rowspan="<%= rows %>">
         <span id="show_product_variants_attributes_<%= variant_counter %>_height" class="field-display">
           <%= number_with_precision(variant.height, :precision => 2) %>
         </span>h
@@ -27,8 +28,24 @@
           <%= number_with_precision(variant.weight, :precision => 2) %>
         </span>
       </td>
-      <td id="show_product_variants_attributes_<%= variant_counter %>_price" class="field-display"><%= variant.display_price.to_html %></td>
-      <td class="actions">
+      <td rowspan="<%= rows %>" id="show_product_variants_attributes_<%= variant_counter %>_price" class="field-display">
+        <%= variant.display_price.to_html %>
+      </td>
+      <% if variant.track_inventory? %>
+        <% stock_item = variant.stock_items.first %>
+          <td class="align-center"><%= stock_item.stock_location.name %></td>
+          <td class="align-center"><%= stock_item.count_on_hand %></td>
+          <td class="align-center">
+            <%= stock_item.backorderable? ? "Yes" : "No" %>
+          </td>
+      <% else %>
+        <td rowspan="1" colspan="3">
+          <span id="show_product_variants_attributes_<%= variant_counter %>_track_inventory" class="field-display">
+              Not tracking inventory
+          </span>
+        </td>
+      <% end %>
+      <td rowspan="<%= rows %>" class="actions">
         <% unless variant.deleted? %>
           <%= link_to_with_icon('edit',
                                 Spree.t(:edit),
@@ -46,11 +63,20 @@
         <% end %>
       </td>
     </tr>
+    <% variant.stock_items.drop(1).each do |stock_item| %>
+      <tr class="show" style="<%= 'display: none'unless variant.track_inventory? %>">
+        <td class="align-center"><%= stock_item.stock_location.name %></td>
+        <td class="align-center"><%= stock_item.count_on_hand %></td>
+        <td class="align-center">
+          <%= stock_item.backorderable? ? "Yes" : "No" %>
+        </td>
+      </tr>
+    <% end %>
 
     <tr class="edit" style="display: none;">
-      <td>
+      <td rowspan="<%= rows %>">
       </td>
-      <td class="sku">
+      <td rowspan="<%= rows %>" class="sku">
         <%= render :partial => 'spree/shared/error_messages', :locals => { :target => variant } %>
         <div class="field" data-hook="sku">
           <%= vf.label :sku, Spree.t(:sku) %>
@@ -58,7 +84,7 @@
         </div>
       </td>
       <% @product.option_types.each do |option_type| %>
-        <td class="option_value">
+        <td rowspan="<%= rows %>" class="option_value">
           <div id="variant_<%= variant_counter %>_option_<%= option_type.name %>" class="field field-option_value" data-hook="presentation">
             <%= label :new_variant, option_type.presentation %>
             <%= vf.collection_select 'option_value_ids', option_type.option_values, :id, :presentation,
@@ -66,15 +92,16 @@
           </div>
         </td>
       <% end %>
-      <td>
+      <td rowspan="<%= rows %>">
         <% [:weight, :height, :width, :depth].each do |field| %>
-          <div class="field" data-hook="<%= field %>"><%= vf.label field, Spree.t(field) %>
+          <div class="field" data-hook="<%= field %>">
+            <%= vf.label field, Spree.t(field) %>
             <% value = number_with_precision(variant.send(field), :precision => 2) %>
             <%= vf.text_field field, :value => value, :class => 'fullwidth edit_field' %>
           </div>
         <% end %>
       </td>
-      <td>
+      <td rowspan="<%= rows %>">
         <div class="field" data-hook="price">
           <%= vf.label :price, Spree.t(:price) %>
           <%= vf.text_field :price, :value => number_to_currency(variant.price, :unit => ''), :class => 'fullwidth edit_field' %>
@@ -90,7 +117,15 @@
           <%= vf.collection_select(:tax_category_id, @tax_categories, :id, :name, { :include_blank => Spree.t('match_choices.none') }, { :class => 'select2 fullwidth' }) %>
         </div>
       </td>
-      <td class="actions">
+      <td colspan="3">
+        <div data-hook="track_inventory" class="field checkbox">
+          <label>
+            <%= vf.check_box :track_inventory %>
+            <%= Spree.t(:track_inventory) %>
+          </label>
+        </div>
+      </td>
+      <td rowspan="<%= rows %>" class="actions">
         <div class="form-buttons filter-actions actions" data-hook="buttons">
           <%= link_to_with_icon('ok',
                                 Spree.t('actions.continue'),
@@ -101,6 +136,18 @@
         </div>
       </td>
     </tr>
+    <% variant.stock_items.each do |stock_item| %>
+      <tr class="edit" style="display: none;">
+        <td class="align-center">Edit <%= stock_item.stock_location.name %></td>
+        <td class="align-center"><%= stock_item.count_on_hand %></td>
+        <td class="align-center">
+          <%= vf.fields_for :stock_items, stock_item do |vif| %>
+            <%= vif.check_box :backorderable %>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+
   <% end %>
 
 </tbody>

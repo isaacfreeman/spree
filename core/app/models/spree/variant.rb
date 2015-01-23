@@ -43,6 +43,8 @@ module Spree
     after_create :set_position
     after_create :set_master_out_of_stock, :unless => :is_master?
 
+    accepts_nested_attributes_for :stock_items, allow_destroy: true
+
     after_touch :clear_in_stock_cache
 
     def self.active(currency = nil)
@@ -167,7 +169,7 @@ module Spree
       options.keys.map { |key|
         m = "#{options[key]}_price_modifier_amount".to_sym
         if self.respond_to? m
-          self.send(m, options[key]) 
+          self.send(m, options[key])
         else
           0
         end
