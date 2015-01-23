@@ -45,8 +45,6 @@
           <%= f.text_field :available_on, :value => datepicker_field_value(@product.available_on), :class => 'datepicker' %>
         <% end %>
       </div>
-    </div>
-  </fieldset>
 
       <div data-hook="admin_product_form_shipping_categories">
         <%= f.field_container :shipping_categories do %>
@@ -102,7 +100,7 @@
     </div>
   </fieldset>
 
-  <fieldset data-hook="admin_product_form_images" class="alpha omega sixteen columns">
+  <fieldset id="admin_product_form_images" data-hook="admin_product_form_images" class="alpha omega sixteen columns">
     <legend>Images</legend>
     <ul class="toolbar inline-menu fieldset-menu" data-hook="toolbar-product-images">
       <% if can?(:admin, Spree::Image) %>
@@ -114,11 +112,6 @@
     <div class="fields" style="<%= 'display:none;' unless @product.has_images? %>">
       <%= render partial: "spree/admin/products/images", locals: {f: f} %>
     </div>
-  </fieldset>
-
-  <fieldset data-hook="admin_product_form_stock" class="alpha omega sixteen columns">
-    <legend>Stock</legend>
-    <%= render partial: "spree/admin/products/stock", locals: {f: f} %>
   </fieldset>
 
   <fieldset data-hook="admin_product_form_meta" class="alpha omega sixteen columns">
