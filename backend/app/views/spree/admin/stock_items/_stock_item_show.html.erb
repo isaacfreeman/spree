@@ -1,0 +1,5 @@
+<td class="align-center"><%= stock_item.stock_location.name %></td>
+<td class="align-center"><%= stock_item.count_on_hand %></td>
+<td class="align-center">
+  <%= stock_item.backorderable? ? "Yes" : "No" %>
+</td>

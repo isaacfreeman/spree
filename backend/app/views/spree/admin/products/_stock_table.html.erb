@@ -26,13 +26,10 @@
             <table>
               <colgroup>
                 <col style="width: 45%" />
-                <col style="width: 20%" />
-                <col style="width: 20%" />
                 <col style="width: 15%" />
               </colgroup>
               <thead>
                 <th><%= Spree.t(:stock_location) %></th>
-                <th><%= Spree.t(:count_on_hand) %></th>
                 <th class="actions"></th>
               </thead>
               <tbody>
@@ -41,7 +38,6 @@
 
                   <tr id="stock-item-<%= item.id %>" class="<%= cycle('odd', 'even', :name => 'stock_locations')%>">
                     <td class="align-center"><%= item.stock_location.name %></td>
-                    <td class="align-center"><%= item.count_on_hand %></td>
                     <td class="actions">
                       <%= link_to(icon('delete'), [:admin, item],
                             method: :delete, remote: true,

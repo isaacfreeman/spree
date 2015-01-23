@@ -57,10 +57,12 @@ form.edit_product .inline-menu {
 
 #variants {
   thead {
-    th.option_types {
+    th.option_types,
+    th.stock {
       border-bottom: none
     }
-    th.option_type {
+    th.option_type,
+    th.stock_field {
       border-left: none;
       border-right: none;
       border-top: none;
