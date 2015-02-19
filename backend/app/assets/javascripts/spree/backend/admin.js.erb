@@ -143,9 +143,9 @@ function closeImageEdit(image) {
     image.children('.show').slideDown();
   });
 }
-function toggleDestroyMarker(variant) {
-  variant.find('.destroy_marker').trigger('click');
-  variant.toggleClass('remove');
+function toggleDestroyMarker(resource) {
+  resource.find('.destroy_marker').trigger('click');
+  resource.toggleClass('remove');
 }
 function updateShowElementFromInput(editField) {
   var correspondingShowElement = '#show_' + editField.attr('id');
@@ -198,6 +198,12 @@ $(document).ready(function(){
     event.preventDefault();
     closeImageEdit($(this).closest('.image'));
   });
+  $('body').on('change', '#product_master_attributes_track_inventory', function(event) {
+    $('#master_stock_table').toggle();
+  });
+  $('body').on('change', '#variants .variant .edit .track_inventory', function(event) {
+    $(this).closest('.stock').find('.variant_stock_table').toggle();
+  });
   $('body').on('click', '#variants .variant .show .delete-variant', function(event) {
     event.preventDefault();
     toggleDestroyMarker($(this).closest('.variant'));
@@ -205,6 +211,10 @@ $(document).ready(function(){
   $('body').on('click', '#images .image .show .delete-image', function(event) {
     event.preventDefault();
     toggleDestroyMarker($(this).closest('.image'));
+  });
+  $('body').on('click', '#variants .stock_item.edit .delete-stock_item', function(event) {
+    event.preventDefault();
+    toggleDestroyMarker($(this).closest('.stock_item'));
   });
   $('body').on('change', '#images .image .edit input', function(event) {
     updateShowElementFromInput($(this));

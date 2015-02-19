@@ -9,27 +9,23 @@
     <col style="width: 10%" />
     <col style="width: 10%" />
     <col style="width: 5%" />
-    <col style="width: 5%" />
     <col style="width: 10%" />
   </colgroup>
   <thead data-hook="variants_header">
     <tr>
-      <th rowspan="2" colspan="2"><%= Spree.t(:sku) %></th>
+      <th rowspan="2" colspan="2" class="sku"><%= Spree.t(:sku) %></th>
       <% if @product.option_types.any? %>
         <th colspan="<%= @product.option_types.count %>" class="option_types"><%= Spree.t(:options) %></th>
       <% end %>
-      <th rowspan="2"><%= Spree.t(:dimensions) %></th>
-      <th rowspan="2"><%= Spree.t(:price) %></th>
-      <th colspan="3" class="stock"><%= Spree.t(:stock) %></th>
+      <th rowspan="2" class="dimensions"><%= Spree.t(:dimensions) %></th>
+      <th rowspan="2"class="price"><%= Spree.t(:price) %></th>
+      <th rowspan="2" class="stock"><%= Spree.t(:stock) %></th>
       <th rowspan="2" class="actions"></th>
     </tr>
     <tr>
       <% @product.option_types.each do |option_type| %>
         <th class="option_type"><%= option_type.presentation %></th>
       <% end %>
-      <th class="stock_field"><%= Spree.t(:stock_location) %></th>
-      <th class="stock_field"><%= Spree.t(:count_on_hand) %></th>
-      <th class="stock_field"><%= Spree.t(:backorderable) %></th>
     </tr>
   </thead>
   <% if @product.has_variants? %>

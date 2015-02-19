@@ -1,6 +1,11 @@
-form.edit_product .inline-menu {
-  float: right;
-  margin-bottom: 10px;
+form.edit_product {
+  textarea {
+    resize: vertical;
+  }
+  .inline-menu {
+    float: right;
+    margin-bottom: 10px;
+  }
 }
 
 [data-hook="admin_products_sidebar"] {
@@ -25,10 +30,6 @@ form.edit_product .inline-menu {
 }
 
 [data-hook="admin_product_form_product_details"] {
-  border: none;
-  legend {
-    display: none;
-  }
   .info-actions {
     text-align: right;
   }
@@ -83,13 +84,11 @@ form.edit_product .inline-menu {
     }
     td {
       border-bottom: none;
+      text-align: center;
     }
     td.sku label,
     td.option_value label {
       display: none;
-    }
-    td.option_value {
-      text-align: center;
     }
     tr.edit {
       td {
@@ -140,6 +139,26 @@ form.edit_product .inline-menu {
 
       &.actions {
         display: none;
+      }
+    }
+  }
+}
+table.grouped_rows#variants tbody tr.stock_item.remove td {
+  background: $color-action-remove-bg;
+  border: solid 1px $color-action-remove-brd;
+  text-decoration: line-through;
+}
+
+#variants .variant .images {
+  .image {
+    display: inline-block;
+    list-style: none;
+    margin: 5px 5px 0 0;
+    a {
+      display: block;
+      border-bottom: 0;
+      line-height: 0;
+      img {
       }
     }
   }

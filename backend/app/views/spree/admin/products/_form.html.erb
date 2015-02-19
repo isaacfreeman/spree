@@ -1,60 +1,17 @@
 <div data-hook="admin_product_form_fields">
 
-  <fieldset class="sixteen columns alpha omega clearfix" data-hook="admin_product_form_product_details">
-    <legend><%= icon('edit') %>Product Details</legend>
-    <div class="ten columns alpha">
-
-      <div data-hook="admin_product_form_name">
-        <%= f.field_container :name do %>
-          <%= f.label :name, raw(Spree.t(:name) + content_tag(:span, ' *', :class => 'required')) %>
-          <%= f.text_field :name, :class => 'fullwidth title' %>
-          <%= f.error_message_on :name %>
-        <% end %>
-      </div>
-
-      <div data-hook="admin_product_form_description">
-        <%= f.field_container :description do %>
-          <%= f.label :description, Spree.t(:description) %>
-          <%= f.text_area :description, {:rows => "#{if @product.has_variants? then '5' else '10' end}", :class => 'fullwidth'} %>
-          <%= f.error_message_on :description %>
-        <% end %>
-      </div>
-
-      <div data-hook="admin_product_form_taxons">
-        <%= f.field_container :taxons do %>
-          <%= f.label :taxon_ids, Spree.t(:taxons) %><br />
-          <%= f.hidden_field :taxon_ids, :value => @product.taxon_ids.join(',') %>
-        <% end %>
-      </div>
-
-    </div>
-    <div class="six columns omega">
-
-      <div data-hook="admin_product_form_slug">
-        <%= f.field_container :slug do %>
-          <%= f.label :slug, raw(Spree.t(:slug) + content_tag(:span, ' *',  :class => "required")) %>
-          <%= f.text_field :slug, :class => 'fullwidth title' %>
-          <%= f.error_message_on :slug %>
-        <% end %>
-      </div>
-
-      <div data-hook="admin_product_form_available_on">
-        <%= f.field_container :available_on do %>
-          <%= f.label :available_on, Spree.t(:available_on) %>
-          <%= f.error_message_on :available_on %>
-          <%= f.text_field :available_on, :value => datepicker_field_value(@product.available_on), :class => 'datepicker' %>
-        <% end %>
-      </div>
-
-      <div data-hook="admin_product_form_shipping_categories">
-        <%= f.field_container :shipping_categories do %>
-          <%= f.label :shipping_category_id, Spree.t(:shipping_categories) %>
-          <%= f.collection_select(:shipping_category_id, @shipping_categories, :id, :name, { :include_blank => Spree.t('match_choices.none') }, { :class => 'select2' }) %>
-          <%= f.error_message_on :shipping_category %>
-        <% end %>
-      </div>
-    </div>
-  </fieldset>
+  <div class="eleven columns alpha">
+    <fieldset data-hook="admin_product_form_product_details">
+      <legend><%= icon('edit') %>Product Details</legend>
+      <%= render partial: "spree/admin/products/product_details_fields", locals: {f: f} %>
+    </fieldset>
+  </div>
+  <div class="five columns omega">
+    <fieldset data-hook="admin_product_form_meta">
+      <legend>SEO</legend>
+      <%= render partial: "spree/admin/products/seo_fields", locals: {f: f} %>
+    </fieldset>
+  </div>
 
   <fieldset id="admin_product_form_master_variant" style="<%= 'display:none;' if @product.has_variants? %>" class="sixteen columns alpha omega clearfix" data-hook="admin_product_form_master_variant">
     <legend><%= icon('th-large') %>Master Variant</legend>
@@ -73,14 +30,6 @@
       <legend>
         <%= icon('th-large') %>Variants
       </legend>
-      <ul class="toolbar inline-menu fieldset-menu" data-hook="toolbar-product-properties">
-        <% if can?(:admin, Spree::Variant) %>
-        <li>
-          <%= button_link_to 'Master Variant',  admin_product_variants_url(@product), :icon => 'th-large', id: 'add_variants' %>
-        </li>
-        <% end %>
-      </ul>
-
       <%= render partial: "spree/admin/products/option_types", locals: {f: f} %>
       <%= render partial: "spree/admin/products/variants", locals: {f: f} %>
     </fieldset>
@@ -112,11 +61,6 @@
     <div class="fields" style="<%= 'display:none;' unless @product.has_images? %>">
       <%= render partial: "spree/admin/products/images", locals: {f: f} %>
     </div>
-  </fieldset>
-
-  <fieldset data-hook="admin_product_form_meta" class="alpha omega sixteen columns">
-    <legend>SEO</legend>
-    <%= render partial: "spree/admin/products/seo_fields", locals: {f: f} %>
   </fieldset>
 
   <div class="clear"></div>

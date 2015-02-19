@@ -1,18 +1,25 @@
 <% stock_items = variant.stock_items.sort_by{|i| i.stock_location.name} %>
-<% show_rows = variant.track_inventory? ? stock_items.count : 1 %>
-<% edit_rows = stock_items.count + 1 %>
 <tbody id="<%= spree_dom_id variant %>" <%= 'style="color:red;"' if variant.deleted? %> data-hook="variants_row" class="variant <%= cycle('odd', 'even')%>">
   <%= f.fields_for :variants, variant do |vf| %>
     <tr class="show">
-      <td rowspan="<%= show_rows %>" class="no-border">
+      <td class="handle no-border">
         <span class="handle"></span>
         <%= vf.hidden_field :position, :value => variant.position, :class => 'position_field' %>
       </td>
-      <td rowspan="<%= show_rows %>" id="show_product_variants_attributes_<%= variant_counter %>_sku" class="field-display"><%= variant.sku %></td>
+      <td id="show_product_variants_attributes_<%= variant_counter %>_sku" class="sku field-display">
+        <%= variant.sku %>
+        <ul class="images">
+          <% variant.images.each do |image| %>
+            <li class="image">
+              <%= link_to image_tag(image.attachment.url(:mini)), image.attachment.url(:product) %>
+            </li>
+          <% end %>
+        </ul>
+      </td>
       <% @product.option_types.each do |option_type| %>
-        <td rowspan="<%= show_rows %>" id="show_variant_<%= variant_counter %>_option_<%= option_type.name %>" class="option_value field-display"><%= variant.option_value(option_type.name) %></td>
+        <td id="show_variant_<%= variant_counter %>_option_<%= option_type.name %>" class="option_value field-display"><%= variant.option_value(option_type.name) %></td>
       <% end %>
-      <td rowspan="<%= show_rows %>">
+      <td class="dimensions">
         <span id="show_product_variants_attributes_<%= variant_counter %>_height" class="field-display">
           <%= number_with_precision(variant.height, :precision => 2) %>
         </span>h
@@ -30,19 +37,23 @@
           <%= number_with_precision(variant.weight, :precision => 2) %>
         </span>
       </td>
-      <td rowspan="<%= show_rows %>" id="show_product_variants_attributes_<%= variant_counter %>_price" class="field-display">
+      <td id="show_product_variants_attributes_<%= variant_counter %>_price" class="price field-display">
         <%= variant.display_price.to_html %>
       </td>
-      <% if variant.track_inventory? %>
-        <%= render partial: 'spree/admin/stock_items/stock_item_show', locals: {stock_item: stock_items.first} %>
-      <% else %>
-        <td rowspan="1" colspan="3">
+      <td class="stock">
+        <% if variant.track_inventory? && stock_items.any? %>
+          <table id="variant_stock_table" style="<%= 'display: none;' unless variant.track_inventory %>">
+            <% stock_items.each do |stock_item| %>
+              <%= render partial: 'spree/admin/stock_items/stock_item_show', locals: {stock_item: stock_item} %>
+            <% end %>
+          </table>
+        <% else %>
           <span id="show_product_variants_attributes_<%= variant_counter %>_track_inventory" class="field-display">
-              Not tracking inventory
+            Not tracking inventory
           </span>
-        </td>
-      <% end %>
-      <td rowspan="<%= show_rows %>" class="actions">
+        <% end %>
+      </td>
+      <td class="actions">
         <% unless variant.deleted? %>
           <%= link_to_with_icon('edit',
                                 Spree.t(:edit),
@@ -60,16 +71,11 @@
         <% end %>
       </td>
     </tr>
-    <% stock_items.drop(1).each do |stock_item| %>
-      <tr class="show" style="<%= 'display: none'unless variant.track_inventory? %>">
-        <%= render partial: 'spree/admin/stock_items/stock_item_show', locals: {stock_item: stock_item} %>
-      </tr>
-    <% end %>
 
     <tr class="edit" style="display: none;">
-      <td rowspan="<%= edit_rows %>">
+      <td>
       </td>
-      <td rowspan="<%= edit_rows %>" class="sku">
+      <td class="sku">
         <%= render :partial => 'spree/shared/error_messages', :locals => { :target => variant } %>
         <div class="field" data-hook="sku">
           <%= vf.label :sku, Spree.t(:sku) %>
@@ -77,7 +83,7 @@
         </div>
       </td>
       <% @product.option_types.each do |option_type| %>
-        <td rowspan="<%= edit_rows %>" class="option_value">
+        <td class="option_value">
           <div id="variant_<%= variant_counter %>_option_<%= option_type.name %>" class="field field-option_value" data-hook="presentation">
             <%= label :new_variant, option_type.presentation %>
             <%= vf.collection_select 'option_value_ids', option_type.option_values, :id, :presentation,
@@ -85,7 +91,7 @@
           </div>
         </td>
       <% end %>
-      <td rowspan="<%= edit_rows %>">
+      <td>
         <% [:weight, :height, :width, :depth].each do |field| %>
           <div class="field" data-hook="<%= field %>">
             <%= vf.label field, Spree.t(field) %>
@@ -94,7 +100,7 @@
           </div>
         <% end %>
       </td>
-      <td rowspan="<%= edit_rows %>">
+      <td>
         <div class="field" data-hook="price">
           <%= vf.label :price, Spree.t(:price) %>
           <%= vf.text_field :price, :value => number_to_currency(variant.price, :unit => ''), :class => 'fullwidth edit_field' %>
@@ -110,15 +116,20 @@
           <%= vf.collection_select(:tax_category_id, @tax_categories, :id, :name, { :include_blank => Spree.t('match_choices.none') }, { :class => 'select2 fullwidth' }) %>
         </div>
       </td>
-      <td colspan="3">
+      <td class="stock">
         <div data-hook="track_inventory" class="field checkbox">
           <label>
-            <%= vf.check_box :track_inventory %>
+            <%= vf.check_box :track_inventory, class: 'track_inventory' %>
             <%= Spree.t(:track_inventory) %>
           </label>
         </div>
+        <table class="variant_stock_table" style="<%= 'display: none;' unless variant.track_inventory %>">
+          <% stock_items.each do |stock_item| %>
+            <%= render partial: 'spree/admin/stock_items/stock_item_edit', locals: {stock_item: stock_item, f: vf} %>
+          <% end %>
+        </table>
       </td>
-      <td rowspan="<%= edit_rows %>" class="actions">
+      <td class="actions">
         <div class="form-buttons filter-actions actions" data-hook="buttons">
           <%= link_to_with_icon('ok',
                                 Spree.t('actions.continue'),
@@ -129,18 +140,6 @@
         </div>
       </td>
     </tr>
-    <% stock_items.each do |stock_item| %>
-      <tr class="edit" style="display: none;">
-        <td class="align-center">Edit <%= stock_item.stock_location.name %></td>
-        <td class="align-center"><%= stock_item.count_on_hand %></td>
-        <td class="align-center">
-          <%= vf.fields_for :stock_items, stock_item do |vif| %>
-            <%= vif.check_box :backorderable %>
-          <% end %>
-        </td>
-      </tr>
-    <% end %>
-
   <% end %>
 
 </tbody>
