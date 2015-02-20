@@ -22,7 +22,7 @@
         </li>
       <% end %>
     </ul>
-    <%= render partial: "spree/admin/variants/master_variant_fields", locals: {f: f} %>
+    <%= render partial: "spree/admin/variants/master_variant_fields", locals: {variant: @product.master, f: f} %>
   </fieldset>
 
   <% if can?(:admin, Spree::Variant) %>

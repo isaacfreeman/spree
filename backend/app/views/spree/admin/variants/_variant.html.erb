@@ -7,7 +7,27 @@
         <%= vf.hidden_field :position, :value => variant.position, :class => 'position_field' %>
       </td>
       <td id="show_product_variants_attributes_<%= variant_counter %>_sku" class="sku field-display">
-        <%= variant.sku %>
+        <div data-hook="admin_product_form_sku">
+          <%= variant.sku %>
+        </div>
+        <div data-hook="admin_product_form_shipping_specs">
+          Weight:
+          <span id="show_product_variants_attributes_<%= variant_counter %>_weight" class="field-display">
+            <%= number_with_precision(variant.weight, :precision => 2) %>
+          </span>
+          &nbsp;
+          <span id="show_product_variants_attributes_<%= variant_counter %>_height" class="field-display">
+            <%= number_with_precision(variant.height, :precision => 2) %>
+          </span>h
+          &times;
+          <span id="show_product_variants_attributes_<%= variant_counter %>_width" class="field-display">
+            <%= number_with_precision(variant.width, :precision => 2) %>
+          </span>w
+          &times;
+          <span id="show_product_variants_attributes_<%= variant_counter %>_depth" class="field-display">
+            <%= number_with_precision(variant.depth, :precision => 2) %>
+          </span>d
+        </div>
         <ul class="images">
           <% variant.images.each do |image| %>
             <li class="image">
@@ -19,32 +39,16 @@
       <% @product.option_types.each do |option_type| %>
         <td id="show_variant_<%= variant_counter %>_option_<%= option_type.name %>" class="option_value field-display"><%= variant.option_value(option_type.name) %></td>
       <% end %>
-      <td class="dimensions">
-        <span id="show_product_variants_attributes_<%= variant_counter %>_height" class="field-display">
-          <%= number_with_precision(variant.height, :precision => 2) %>
-        </span>h
-        &times;
-        <span id="show_product_variants_attributes_<%= variant_counter %>_width" class="field-display">
-          <%= number_with_precision(variant.width, :precision => 2) %>
-        </span>w
-        &times;
-        <span id="show_product_variants_attributes_<%= variant_counter %>_depth" class="field-display">
-          <%= number_with_precision(variant.depth, :precision => 2) %>
-        </span>d
-        <br />
-        Weight:
-        <span id="show_product_variants_attributes_<%= variant_counter %>_weight" class="field-display">
-          <%= number_with_precision(variant.weight, :precision => 2) %>
-        </span>
-      </td>
       <td id="show_product_variants_attributes_<%= variant_counter %>_price" class="price field-display">
         <%= variant.display_price.to_html %>
       </td>
       <td class="stock">
         <% if variant.track_inventory? && stock_items.any? %>
-          <table id="variant_stock_table" style="<%= 'display: none;' unless variant.track_inventory %>">
+          <table class="variant_stock_table" style="<%= 'display: none;' unless variant.track_inventory %>">
             <% stock_items.each do |stock_item| %>
-              <%= render partial: 'spree/admin/stock_items/stock_item_show', locals: {stock_item: stock_item} %>
+              <% if stock_item.count_on_hand > 0 || stock_item.backorderable %>
+                <%= render partial: 'spree/admin/stock_items/stock_item_show', locals: {stock_item: stock_item} %>
+              <% end %>
             <% end %>
           </table>
         <% else %>
@@ -81,6 +85,28 @@
           <%= vf.label :sku, Spree.t(:sku) %>
           <%= vf.text_field :sku, :class => 'fullwidth edit_field' %>
         </div>
+        <div data-hook="admin_product_form_shipping_specs">
+          <ul>
+            <div class="shipping_specs_weight_field field alpha two columns" data-hook="admin_product_form_weight">
+              <%= f.label :weight, Spree.t(:weight) %>
+              <%= f.text_field :weight, :size => 4 %>
+            </div>
+            <li class="shipping_specs_height_field field one columns" data-hook="admin_product_form_height">
+              <%= f.label :height, Spree.t(:height) %>
+              <%= f.text_field :height, :size => 4 %>
+            </li>
+            <li class="shipping_specs_width_field field one columns" data-hook="admin_product_form_width">
+              <%= f.label :width, Spree.t(:width) %>
+              <%= f.text_field :width, :size => 4 %>
+            </li>
+            <li class="shipping_specs_depth_field field omega one columns" data-hook="admin_product_form_depth">
+              <%= f.label :depth, Spree.t(:depth) %>
+              <%= f.text_field :depth, :size => 4 %>
+            </li>
+          </ul>
+        </div>
+
+
       </td>
       <% @product.option_types.each do |option_type| %>
         <td class="option_value">
@@ -91,15 +117,6 @@
           </div>
         </td>
       <% end %>
-      <td>
-        <% [:weight, :height, :width, :depth].each do |field| %>
-          <div class="field" data-hook="<%= field %>">
-            <%= vf.label field, Spree.t(field) %>
-            <% value = number_with_precision(variant.send(field), :precision => 2) %>
-            <%= vf.text_field field, :value => value, :class => 'fullwidth edit_field' %>
-          </div>
-        <% end %>
-      </td>
       <td>
         <div class="field" data-hook="price">
           <%= vf.label :price, Spree.t(:price) %>

@@ -1,23 +1,25 @@
 <%= f.fields_for :stock_items, stock_item do |sif| %>
-  <tr class="stock_item edit" style="display: table-row;">
-    <td class="align-center"><%= stock_item.stock_location.name %></td>
-    <td class="align-center">
-      <%= stock_item.count_on_hand %>
-      <%= sif.label :backorderable do %>
-        <%= Spree.t(:backorderable) %>
-        <%= sif.check_box :backorderable %>
+  <%= render partial: 'spree/admin/stock_items/stock_item_show', locals: {stock_item: stock_item} %>
+  <tr class="stock_item edit">
+    <td>
+      <% if stock_item.id %>
+        <div class="field alpha two columns">
+          <%= sif.fields_for :stock_movements, stock_item.stock_movements.build do |smf| %>
+            <div data-hook="admin_stock_movements_form_fields">
+              <%= smf.label :quantity, Spree.t(:modify_stock) %>
+              <%= smf.number_field :quantity, class: 'modify_stock_quantity', value: 0 %>
+            </div>
+          <% end %>
+        </div>
       <% end %>
     </td>
     <td>
-      <% unless stock_item.deleted? %>
-      <%= link_to_with_icon('trash',
-        Spree.t(:delete),
-        admin_stock_item_url(stock_item),
-        :no_text => true,
-        :class => "delete-stock_item"
-      ) unless stock_item.deleted? || stock_item.new_record? %>
-      <%= sif.check_box '_destroy', :value => false, :class => 'destroy_marker', :style => 'display: none;' %>
-      <% end %>
+      <div class="field omega two columns">
+        <%= sif.label :backorderable do %>
+          <%= Spree.t(:backorders_allowed) %>
+          <%= sif.check_box :backorderable %>
+        <% end %>
+      </div>
     </td>
   </tr>
 <% end %>

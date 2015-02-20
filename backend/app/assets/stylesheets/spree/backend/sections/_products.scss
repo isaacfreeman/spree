@@ -86,7 +86,6 @@ form.edit_product {
       border-bottom: none;
       text-align: center;
     }
-    td.sku label,
     td.option_value label {
       display: none;
     }
@@ -143,10 +142,33 @@ form.edit_product {
     }
   }
 }
-table.grouped_rows#variants tbody tr.stock_item.remove td {
-  background: $color-action-remove-bg;
-  border: solid 1px $color-action-remove-brd;
-  text-decoration: line-through;
+table td input.modify_stock_quantity {
+  width: 6em;
+}
+.stock_item .quantity {
+  background: rgb(84, 152, 218);
+  border-radius: 1em;
+  color: white;
+  padding: 0.125em 0.5em;
+  text-align: center;
+}
+table.variant_stock_table {
+  margin: 0;
+  tbody tr.edit td {
+    padding: 0;
+  }
+}
+table.variant_stock_table tbody tr td,
+table.grouped_rows#variants table.variant_stock_table tbody tr td {
+  border: none;
+}
+table.variant_stock_table tbody tr.show td,
+table.grouped_rows#variants table.variant_stock_table tbody tr.show td {
+  border-top: 1px solid #cee1f4;
+}
+table.variant_stock_table tbody tr.show:first-child td,
+table.grouped_rows#variants table.variant_stock_table tbody tr.show:first-child td {
+  border-top: none;
 }
 
 #variants .variant .images {
@@ -159,93 +181,6 @@ table.grouped_rows#variants tbody tr.stock_item.remove td {
       border-bottom: 0;
       line-height: 0;
       img {
-      }
-    }
-  }
-}
-
-#stock {
-  > tbody {
-    > tr {
-      &.even {
-        td {
-          background-color: $color-tbl-even;
-        }
-      }
-      &.odd:hover > td {
-        background-color: $color-tbl-even;
-      }
-      > td {
-        background-color: $color-tbl-odd;
-
-        > table {
-          > tbody {
-            > tr {
-              > td {
-                border-color: lighten($color-border, 4);
-              }
-            }
-            > tr.even {
-              td {
-                background-color: lighten($color-tbl-even, 2);
-              }
-            }
-            > tr.odd {
-              td {
-                background-color: $color-tbl-odd;
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-  td {
-    vertical-align: middle;
-
-    &.stock_location_info {
-      padding: 0;
-
-      table {
-        margin-bottom: 0;
-        border-collapse: collapse;
-        min-height: 102px;
-
-        thead {
-          th {
-            border-top: none;
-            padding: 5px 10px;
-            text-transform: none;
-
-            &:first-child {
-              border-left: none;
-            }
-            &:last-child {
-              border-right: none;
-            }
-          }
-        }
-        tbody {
-          tr {
-            td {
-              padding: 5px 10px;
-              vertical-align: middle;
-
-              &:first-child {
-                border-left: none;
-              }
-              &:last-child {
-                border-right: none;
-              }
-            }
-
-            &:last-child {
-              td {
-                border-bottom: none;
-              }
-            }
-          }
-        }
       }
     }
   }

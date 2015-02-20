@@ -1,10 +1,13 @@
 <tr class="stock_item show">
-  <td class="stock-location">
-    <%= stock_item.stock_location.name %>
+  <td style="width: 100%;">
+    <span class="stock_location">
+      <%= stock_item.stock_location.name %>
+    </span>
   </td>
-  <td class="stock-count">
-    <%= stock_item.count_on_hand %>
-    <br>
-    <%= stock_item.backorderable? ? Spree.t(:backorders_allowed) : "" %>
+  <td>
+    <span class="quantity"><%= stock_item.count_on_hand %></span>
+    <% if stock_item.backorderable? %>
+      <br>(<%= Spree.t(:backorders_allowed) %>)
+    <% end %>
   </td>
 </tr>
