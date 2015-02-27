@@ -13,12 +13,9 @@
     </tr>
   </thead>
   <%= f.fields_for :master, @product.master do |vf| %>
-    <% if @product.master.images.any? %>
-      <% @product.master.images.each_with_index do |image, i| %>
-        <%= render partial: 'spree/admin/images/image', locals: {f: vf, image: image, image_counter: i} %>
-      <% end %>
-    <% else %>
-      <%= render partial: "spree/admin/images/image_edit", locals: {f: vf, image: Spree::Image.new, image_counter: 0} %>
+    <% @product.master.images.each_with_index do |image, i| %>
+      <%= render partial: 'spree/admin/images/image', locals: {f: vf, image: image, image_counter: i} %>
     <% end %>
+    <%= render partial: 'spree/admin/images/image_handlebars_template', locals: {f: vf} %>
   <% end %>
 </table>

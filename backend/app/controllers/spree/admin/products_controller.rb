@@ -33,16 +33,6 @@ module Spree
         if params[:product][:option_type_ids].present?
           params[:product][:option_type_ids] = params[:product][:option_type_ids].split(',')
         end
-        # if params[:product][:variant_images_attributes].present?
-        #   # restructure to move image params under their variants
-        #   params[:product][:variant_images_attributes].each do |ia|
-        #     variant_id = ia.last['viewable_id'] || @product.master.id
-        #     variant_hash = params[:product][:variants_attributes].find{|v| v.last['id']==variant_id}
-        #     variant_hash.last['images_attributes'] = {} unless variant_hash.last['images_attributes']
-        #     variant_hash.last['images_attributes'].merge!({ia.first => ia.last})
-        #   end
-        #   params[:product][:variant_images_attributes]={}
-        # end
         invoke_callbacks(:update, :before)
         if @object.update_attributes(permitted_resource_params)
           invoke_callbacks(:update, :after)
