@@ -21,7 +21,6 @@ module Spree
       def update
         @variants = @product.variants
         @variants = [@product.master] if @variants.empty?
-        @variant_images = @product.variant_images
         @stock_locations = StockLocation.accessible_by(current_ability, :read)
         if @stock_locations.empty?
           flash[:error] = Spree.t(:stock_management_requires_a_stock_location)
@@ -34,6 +33,16 @@ module Spree
         if params[:product][:option_type_ids].present?
           params[:product][:option_type_ids] = params[:product][:option_type_ids].split(',')
         end
+        # if params[:product][:variant_images_attributes].present?
+        #   # restructure to move image params under their variants
+        #   params[:product][:variant_images_attributes].each do |ia|
+        #     variant_id = ia.last['viewable_id'] || @product.master.id
+        #     variant_hash = params[:product][:variants_attributes].find{|v| v.last['id']==variant_id}
+        #     variant_hash.last['images_attributes'] = {} unless variant_hash.last['images_attributes']
+        #     variant_hash.last['images_attributes'].merge!({ia.first => ia.last})
+        #   end
+        #   params[:product][:variant_images_attributes]={}
+        # end
         invoke_callbacks(:update, :before)
         if @object.update_attributes(permitted_resource_params)
           invoke_callbacks(:update, :after)
@@ -81,7 +90,6 @@ module Spree
       def edit
         @variants = @product.variants
         @variants = [@product.master] if @variants.empty?
-        @variant_images = @product.variant_images
         @properties = Spree::Property.pluck(:name)
         @product.product_properties.build
         @stock_locations = StockLocation.accessible_by(current_ability, :read)

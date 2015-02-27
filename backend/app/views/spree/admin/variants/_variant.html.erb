@@ -1,6 +1,6 @@
 <% stock_items = variant.stock_items.sort_by{|i| i.stock_location.name} %>
 <tbody id="<%= spree_dom_id variant %>" <%= 'style="color:red;"' if variant.deleted? %> data-hook="variants_row" class="variant <%= cycle('odd', 'even')%>">
-  <%= f.fields_for :variants, variant do |vf| %>
+  <%= f.fields_for :variants, variant, child_index: variant.id do |vf| %>
     <tr class="show">
       <td class="handle no-border">
         <span class="handle"></span>
@@ -11,30 +11,36 @@
           <%= variant.sku %>
         </div>
         <div data-hook="admin_product_form_shipping_specs">
-          Weight:
-          <span id="show_product_variants_attributes_<%= variant_counter %>_weight" class="field-display">
-            <%= number_with_precision(variant.weight, :precision => 2) %>
-          </span>
-          &nbsp;
-          <span id="show_product_variants_attributes_<%= variant_counter %>_height" class="field-display">
-            <%= number_with_precision(variant.height, :precision => 2) %>
-          </span>h
-          &times;
-          <span id="show_product_variants_attributes_<%= variant_counter %>_width" class="field-display">
-            <%= number_with_precision(variant.width, :precision => 2) %>
-          </span>w
-          &times;
-          <span id="show_product_variants_attributes_<%= variant_counter %>_depth" class="field-display">
-            <%= number_with_precision(variant.depth, :precision => 2) %>
-          </span>d
-        </div>
-        <ul class="images">
-          <% variant.images.each do |image| %>
-            <li class="image">
-              <%= link_to image_tag(image.attachment.url(:mini)), image.attachment.url(:product) %>
-            </li>
+          <% unless variant.weight.blank? %>
+            Weight:
+            <span id="show_product_variants_attributes_<%= variant_counter %>_weight" class="field-display">
+              <%= number_with_precision(variant.weight, :precision => 2) %>
+            </span>
+            &nbsp;
           <% end %>
-        </ul>
+          <% unless (variant.height.blank? && variant.width.blank? && variant.depth.blank?) %>
+            <span id="show_product_variants_attributes_<%= variant_counter %>_height" class="field-display">
+              <%= variant.height.blank? ? '?' : number_with_precision(variant.height, :precision => 2) %>
+            </span>h
+            &times;
+            <span id="show_product_variants_attributes_<%= variant_counter %>_width" class="field-display">
+              <%= variant.width.blank? ? '?' : number_with_precision(variant.width, :precision => 2) %>
+            </span>w
+            &times;
+            <span id="show_product_variants_attributes_<%= variant_counter %>_depth" class="field-display">
+              <%= variant.depth.blank? ? '?' : number_with_precision(variant.depth, :precision => 2) %>
+            </span>d
+          <% end %>
+        </div>
+        <div data-hook="admin_product_form_variant_images">
+          <ul class="images">
+            <% variant.images.each do |image| %>
+              <li class="image">
+                <%= link_to image_tag(image.attachment.url(:mini)), image.attachment.url(:product) %>
+              </li>
+            <% end %>
+          </ul>
+        </div>
       </td>
       <% @product.option_types.each do |option_type| %>
         <td id="show_variant_<%= variant_counter %>_option_<%= option_type.name %>" class="option_value field-display"><%= variant.option_value(option_type.name) %></td>
@@ -88,25 +94,44 @@
         <div data-hook="admin_product_form_shipping_specs">
           <ul>
             <div class="shipping_specs_weight_field field alpha two columns" data-hook="admin_product_form_weight">
-              <%= f.label :weight, Spree.t(:weight) %>
-              <%= f.text_field :weight, :size => 4 %>
+              <%= vf.label :weight, Spree.t(:weight) %>
+              <%= vf.text_field :weight, :size => 4 %>
             </div>
             <li class="shipping_specs_height_field field one columns" data-hook="admin_product_form_height">
-              <%= f.label :height, Spree.t(:height) %>
-              <%= f.text_field :height, :size => 4 %>
+              <%= vf.label :height, Spree.t(:height) %>
+              <%= vf.text_field :height, :size => 4 %>
             </li>
             <li class="shipping_specs_width_field field one columns" data-hook="admin_product_form_width">
-              <%= f.label :width, Spree.t(:width) %>
-              <%= f.text_field :width, :size => 4 %>
+              <%= vf.label :width, Spree.t(:width) %>
+              <%= vf.text_field :width, :size => 4 %>
             </li>
             <li class="shipping_specs_depth_field field omega one columns" data-hook="admin_product_form_depth">
-              <%= f.label :depth, Spree.t(:depth) %>
-              <%= f.text_field :depth, :size => 4 %>
+              <%= vf.label :depth, Spree.t(:depth) %>
+              <%= vf.text_field :depth, :size => 4 %>
             </li>
           </ul>
         </div>
-
-
+        <div data-hook="admin_product_form_variant_images">
+          <ul class="toolbar inline-menu" data-hook="toolbar-product-images">
+            <li id="new_image_link" data-hook>
+              <%= link_to_with_icon('plus', Spree.t(:new_image), 'javascript:', :data => { :target => "#variant_#{variant.id}_image_table", :elementTag => 'tbody' }, :class => "plus button spree_add_image") %>
+            </li>
+          </ul>
+          <table class="variant_image_table" id="variant_<%= variant.id %>_image_table">
+            <% if variant.images.any? %>
+              <% variant.images.each do |image| %>
+                <tbody id="<%= spree_dom_id image %>" data-hook="images_row" class="image <%= cycle('odd', 'even')%>">
+                  <%= render partial: 'spree/admin/images/image_edit', locals: {image: image, f: vf} %>
+                </tbody>
+              <% end %>
+            <% else %>
+              <% image = Spree::Image.new %>
+              <tbody id="<%= spree_dom_id image %>" data-hook="images_row" class="image <%= cycle('odd', 'even')%>">
+                <%= render partial: 'spree/admin/images/image_edit', locals: {image: image, f: vf} %>
+              </tbody>
+            <% end %>
+          </table>
+        </div>
       </td>
       <% @product.option_types.each do |option_type| %>
         <td class="option_value">

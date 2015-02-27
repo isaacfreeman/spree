@@ -44,6 +44,7 @@ module Spree
     after_create :set_master_out_of_stock, :unless => :is_master?
 
     accepts_nested_attributes_for :stock_items, allow_destroy: true
+    accepts_nested_attributes_for :images, allow_destroy: true
 
     after_touch :clear_in_stock_cache
 
