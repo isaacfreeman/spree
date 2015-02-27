@@ -333,79 +333,29 @@ $(document).ready(function(){
     openVariantEdit($(newVariant));
   })
 
-  $('.spree_add_image').click(function() {
-    var target = $(this).data("target");
-    var elementTag = $(this).data("elementtag");
-    var existingImage = $(target + ' ' + elementTag + ':visible:last')
-    var newImage = existingImage.clone();
-    var newId = new Date().getTime() + (uniqueId++);
-
-    replaceId(newImage, newId);
-    newImage.find(".field-display").each(function () {
-      $(this).html("");
-      replaceId($(this), newId);
-    });
-    newImage.find("input, select, textarea").each(function () {
-      $(this).val("");
-      replaceId($(this), newId);
-      $(this).prop("name", $(this).prop("name").replace(/\d+(?!.*\d+)/, newId))
-    });
-    newImage.find("label").each(function () {
-      $(this).prop("for", $(this).prop("for").replace(/\d+(?!.*\d+)/, newId))
-    });
-    newImage.find(".field-option_value").each(function () {
-      replaceId($(this), newId);
-    });
-    // When cloning a new row, set the href of all icons to be an empty "#"
-    // This is so that clicking on them does not perform the actions for the
-    // duplicated row
-    newImage.find("a").each(function () {
-      $(this).prop('href', '#');
-    });
-    $(newImage).find(".select2").select2('destroy');
-    $(newImage).find('.select2-container ').remove();
-    $(newImage).find(".select2").select2();
-    $(target).append(newImage);
-    openImageEdit($(newImage));
-  })
-
-  $('.spree_new_image').click(function(event) {
+  $('.spree_add_image').click(function(event) {
     event.preventDefault();
     var target = $(this).data("target");
     var elementTemplateId = $(this).data("elementtemplate");
-    var elementTag = $(this).data("elementtag"); // TODO: Get this from template somehow
+    var itemTag = $(this).data("itemtag");
+    addImage(target, elementTemplateId, itemTag)
+  })
+
+  function addImage(target, elementTemplateId, itemTag) {
+    // TODO: Get itemTag from template somehow
     window.elementTemplate = Handlebars.compile($(elementTemplateId).text());
-    var elementCount = $(target).find(elementTag).length;
+    var elementCount = $(target).find(itemTag).length;
     var newId = new Date().getTime() + (uniqueId++);
-    var image = {
+    var element = {
       id: newId,
       position: elementCount + 1,
       alt: '',
       parity: (elementCount % 2 == 0) ? 'even' : 'odd'
     };
-    newElement = elementTemplate({image: image});
+    newElement = elementTemplate({image: element});
     $(target).append(newElement);
     openImageEdit($('#spree_image_' + newId));
-  })
-
-  $('.spree_new_image_edit').click(function(event) {
-    event.preventDefault();
-    var target = $(this).data("target");
-    var elementTemplateId = $(this).data("elementtemplate");
-    var elementTag = $(this).data("elementtag");
-    window.elementTemplate = Handlebars.compile($(elementTemplateId).text());
-    var elementCount = $(target).find(elementTag).length;
-    var newId = new Date().getTime() + (uniqueId++);
-    var image = {
-      id: newId,
-      position: elementCount + 1,
-      alt: '',
-      parity: (elementCount % 2 == 0) ? 'even' : 'odd'
-    };
-    newElement = elementTemplate({image: image});
-    $(target).append(newElement);
-    openImageEdit($('#spree_image_' + newId));
-  })
+  }
 
   $('body').on('click', '.delete-resource', function() {
     var el = $(this);

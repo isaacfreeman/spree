@@ -114,15 +114,12 @@
         <div data-hook="admin_product_form_variant_images">
           <ul class="toolbar inline-menu" data-hook="toolbar-product-images">
             <li id="new_image_link" data-hook>
-              <%= link_to_with_icon('plus', Spree.t(:new_image), new_admin_product_image_path(@product), remote: true, :data => { :target => "#variant_#{variant.id}_image_table", :elementTag => 'tbody', :elementTemplate => "#variant_#{variant.id}_image_edit_template" }, :class => "plus button spree_new_image_edit") %>
-              <%#= link_to_with_icon('plus', Spree.t(:new_image), 'javascript:', :data => { :target => "#variant_#{variant.id}_image_table", :elementTag => 'tbody' }, :class => "plus button spree_new_image_edit") %>
+              <%= link_to_with_icon('plus', Spree.t(:new_image), new_admin_product_image_path(@product), remote: true, :data => { :target => "#variant_#{variant.id}_image_table", :itemTag => 'tbody', :elementTemplate => "#variant_#{variant.id}_image_edit_template" }, :class => "plus button spree_add_image") %>
             </li>
           </ul>
           <table class="variant_image_table" id="variant_<%= variant.id %>_image_table">
             <% variant.images.each do |image| %>
-              <tbody id="<%= spree_dom_id image %>" data-hook="images_row" class="image <%= cycle('odd', 'even')%>">
-                <%= render partial: 'spree/admin/images/image_edit', locals: {image: image, f: vf} %>
-              </tbody>
+              <%= render partial: 'spree/admin/images/image_edit', locals: {image: image, f: vf} %>
             <% end %>
             <%= render partial: 'spree/admin/images/image_edit_handlebars_template', locals: {f: vf, variant: variant} %>
           </table>
