@@ -1,42 +1,22 @@
-<script type='text/template' id='image_template'>
-  <tbody id="spree_image_{{ image.id }}" data-hook="images_row" class="image {{ image.parity }}">
-    <tr class="show">
+<script type='text/template' id='variant_image_template'>
+  <tbody id="spree_image_{{ image.id }}" data-hook="images_row" class="image {{ image.parity }} new">
+    <tr class="edit" data-hook="admin_image_form_fields">
       <td class="no-border">
         <span class="handle"></span>
-        <input class="position_field" id="product_master_attributes_images_attributes_{{ image.id }}_position" name="product[master_attributes][images_attributes][{{ image.id }}][position]" type="hidden" value="{{ image.position }}">
+        <input class="position_field" id="product_variants_attributes_VARIANTIDGOESHERE_images_attributes_{{ image.id }}_position" name="product[variants_attributes][VARIANTIDGOESHERE][images_attributes][{{ image.id }}][position]" type="hidden" value="{{ image.position }}">
       </td>
-      <td id="show_product_variant_images_attributes_{{ image.id }}_attachment" class="field-display align-center">
-        <a href="#"><img src="#"></a>
-      </td>
-      <td id="show_product_variant_images_attributes_{{ image.id }}_alt" class="field-display">{{ image.alt }}</td>
-      <td class="actions">
-        <a class="fa fa-edit icon_link with-tip no-text" data-action="edit" href="http://reference-spree-store.dev/admin/products/product-with-variants/images/{{ image.id }}/edit"></a>
-        <a class="delete-image fa fa-trash icon_link with-tip no-text" href="http://reference-spree-store.dev/admin/products/product-with-variants/images/{{ image.id }}"></a>
-        <input name="product[master_attributes][images_attributes][{{ image.id }}][_destroy]" type="hidden" value="0"><input class="destroy_marker" id="product_master_attributes_images_attributes_{{ image.id }}__destroy" name="product[master_attributes][images_attributes][{{ image.id }}][_destroy]" style="display: none;" type="checkbox" value="1">
-      </td>
-    </tr>
-
-    <tr class="edit" style="display: none;" data-hook="admin_image_form_fields">
-      <td></td>
       <td>
-
         <div data-hook="file" class="field">
-          <label for="product_master_attributes_images_attributes_{{ image.id }}_attachment">Filename</label><br>
-          <input id="product_master_attributes_images_attributes_{{ image.id }}_attachment" name="product[master_attributes][images_attributes][{{ image.id }}][attachment]" type="file">
+          <input id="product_variants_attributes_VARIANTIDGOESHERE_images_attributes_{{ image.id }}_attachment" name="product[variants_attributes][VARIANTIDGOESHERE][images_attributes][{{ image.id }}][attachment]" type="file">
         </div>
       </td>
       <td data-hook="alt_text" class="field">
-        <label for="product_master_attributes_images_attributes_{{ image.id }}_alt">Alternative Text</label><br>
-        <textarea class="fullwidth" id="product_master_attributes_images_attributes_{{ image.id }}_alt" name="product[master_attributes][images_attributes][{{ image.id }}][alt]" rows="4">{{ image.alt }}</textarea>
+        <input id="product_variants_attributes_VARIANTIDGOESHERE_images_attributes_{{ image.id }}_alt" name="product[variants_attributes][VARIANTIDGOESHERE][images_attributes][{{ image.id }}][alt]" value="{{ image.alt }}">
       </td>
-
       <td class="actions">
-        <div class="form-buttons filter-actions actions" data-hook="buttons">
-          <a class="fa fa-ok icon_link with-tip no-text" data-target="spree_image_{{ image.id }}" href="#"></a>
-        </div>
+        <a class="delete-image fa fa-trash icon_link with-tip no-text" href="#"></a>
       </td>
-
     </tr>
-    <input id="product_master_attributes_images_attributes_{{ image.id }}_id" name="product[master_attributes][images_attributes][{{ image.id }}][id]" type="hidden" value="">
+    <input id="product_variants_attributes_VARIANTIDGOESHERE_images_attributes_{{ image.id }}_id" name="product[variants_attributes][VARIANTIDGOESHERE][images_attributes][{{ image.id }}][id]" type="hidden" value="">
   </tbody>
 </script>

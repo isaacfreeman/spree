@@ -207,15 +207,23 @@ $(document).ready(function(){
   });
   $('body').on('click', '#variants .variant .show .delete-variant', function(event) {
     event.preventDefault();
-    toggleDestroyMarker($(this).closest('.variant'));
+    var variant = $(this).closest('.variant');
+    if (variant.hasClass('new')) {
+      variant.remove();
+    }
+    else {
+      toggleDestroyMarker(variant);
+    }
   });
-  // $('body').on('click', '#images .image .show .delete-image', function(event) {
-  //   event.preventDefault();
-  //   toggleDestroyMarker($(this).closest('.image'));
-  // });
   $('body').on('click', '.image .delete-image', function(event) {
     event.preventDefault();
-    toggleDestroyMarker($(this).closest('.image'));
+    var image = $(this).closest('.image');
+    if (image.hasClass('new')) {
+      image.remove();
+    }
+    else {
+      toggleDestroyMarker(image);
+    }
   });
   $('body').on('click', '#variants .stock_item.edit .delete-stock_item', function(event) {
     event.preventDefault();
@@ -299,51 +307,56 @@ $(document).ready(function(){
     $(target).prepend(newElement);
     $(newElement).find(".select2").select2();
   })
-
-  $('.spree_add_variant').click(function() {
-    var target = $(this).data("target");
-    var elementTag = $(this).data("elementtag");
-    var existingVariant = $(target + ' ' + elementTag + ':visible:last')
-    var newVariant = existingVariant.clone();
-    var newId = new Date().getTime() + (uniqueId++);
-
-    replaceId(newVariant, newId);
-    newVariant.find(".field-display").each(function () {
-      $(this).html("");
-      replaceId($(this), newId);
-    });
-    newVariant.find("input, select, textarea").each(function () {
-      $(this).val("");
-      replaceId($(this), newId);
-      $(this).prop("name", $(this).prop("name").replace(/\d+(?!.*\d+)/, newId))
-    });
-    newVariant.find(".field-option_value").each(function () {
-      replaceId($(this), newId);
-    });
-    // When cloning a new row, set the href of all icons to be an empty "#"
-    // This is so that clicking on them does not perform the actions for the
-    // duplicated row
-    newVariant.find("a").each(function () {
-      $(this).prop('href', '#');
-    });
-    $(newVariant).find(".select2").select2('destroy');
-    $(newVariant).find('.select2-container ').remove();
-    $(newVariant).find(".select2").select2();
-    $(target).append(newVariant);
-    openVariantEdit($(newVariant));
-  })
-
-  $('.spree_add_image').click(function(event) {
+  $('.spree_add_variant').click(function(event) {
     event.preventDefault();
-    var target = $(this).data("target");
-    var elementTemplateId = $(this).data("elementtemplate");
-    var itemTag = $(this).data("itemtag");
-    addImage(target, elementTemplateId, itemTag)
+    addVariantElement(
+      $(this).data("target"),
+      $(this).data("itemtag")
+    );
   })
 
-  function addImage(target, elementTemplateId, itemTag) {
-    // TODO: Get itemTag from template somehow
-    window.elementTemplate = Handlebars.compile($(elementTemplateId).text());
+  function addVariantElement(target, itemTag) {
+    // TODO: Get itemTag from template
+    window.elementTemplate = Handlebars.compile($('#variant_template').text());
+    var elementCount = $(target).find(itemTag).length;
+    var newId = new Date().getTime() + (uniqueId++);
+    var element = {
+      id: newId,
+      position: elementCount + 1,
+      alt: '',
+      parity: (elementCount % 2 == 0) ? 'even' : 'odd'
+    };
+    newElement = elementTemplate({variant: element});
+    $(target).append(newElement);
+    $('#spree_variant_' + newId).find('.select2').select2()
+    openVariantEdit($('#spree_variant_' + newId));
+  }
+
+
+  $('body').on('click', '.spree_add_image', function(event) {
+    event.preventDefault();
+    addImage(
+      $(this).data("target"),
+      $(this).data("variantid"),
+      $(this).data("itemtag"),
+      $(this).data("ismaster")
+    );
+  })
+
+  function addImage(target, variantId, itemTag, isMaster) {
+    if (isMaster) {
+      var variantsAttributesString1 = 'product_master_attributes';
+      var variantsAttributesString2 = 'product[master_attributes]';
+    }
+    else {
+      var variantsAttributesString1 = 'product_variants_attributes_' + variantId;
+      var variantsAttributesString2 = 'product[variants_attributes][' + variantId + ']';
+    }
+    window.elementTemplate = Handlebars.compile(
+      $('#variant_image_template').text()
+        .replace(/product_variants_attributes_VARIANTIDGOESHERE/g, variantsAttributesString1)
+        .replace(/product\[variants_attributes\]\[VARIANTIDGOESHERE\]/g, variantsAttributesString2)
+    );
     var elementCount = $(target).find(itemTag).length;
     var newId = new Date().getTime() + (uniqueId++);
     var element = {
@@ -467,16 +480,16 @@ $(document).ready(function(){
       });
   });
 
-  $('table.sortable-variants').ready(function(){
+  $('table.sortable-images').ready(function(){
     var tdCount = $(this).find('tbody tr:first-child td').length
-    $('table.sortable-variants').sortable(
+    $('table.sortable-images').sortable(
       {
         handle: '.handle',
         helper: fixHelper,
         placeholder: 'ui-sortable-placeholder',
         update: function(event, ui) {
-          $(this).children('.variant').each(function (index, variant) {
-            $(variant).find('.position_field').val(index);
+          $(this).children('.image').each(function (index, image) {
+            $(image).find('.position_field').val(index);
           });
         },
         start: function (event, ui) {

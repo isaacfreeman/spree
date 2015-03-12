@@ -59,7 +59,9 @@
       <% end %>
     </ul>
     <div class="fields" style="<%= 'display:none;' unless @product.has_images? %>">
-      <%= render partial: "spree/admin/products/images", locals: {f: f} %>
+      <%= f.fields_for :master, @product.master do |vf| %>
+        <%= render partial: "spree/admin/images/images", locals: {f: vf, variant: @product.master, is_master: true} %>
+      <% end %>
     </div>
   </fieldset>
 
@@ -69,3 +71,8 @@
 
   <div class="clear"></div>
 </div>
+
+<% if @product.has_variants? %>
+  <%= render partial: 'spree/admin/variants/variant_handlebars_template' %>
+<% end %>
+<%= render partial: 'spree/admin/images/image_handlebars_template' %>

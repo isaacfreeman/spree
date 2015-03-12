@@ -1,4 +1,4 @@
-<% stock_items = variant.stock_items.sort_by{|i| i.stock_location.name} %>
+<% stock_items = variant.stock_items.sort_by{|i| i.stock_location.try(:name) || '' } %>
 <tbody id="<%= spree_dom_id variant %>" <%= 'style="color:red;"' if variant.deleted? %> data-hook="variants_row" class="variant <%= cycle('odd', 'even')%>">
   <%= f.fields_for :variants, variant, child_index: variant.id do |vf| %>
     <tr class="show">
@@ -83,9 +83,7 @@
     </tr>
 
     <tr class="edit" style="display: none;">
-      <td>
-      </td>
-      <td class="sku">
+      <td colspan='2' class="sku">
         <%= render :partial => 'spree/shared/error_messages', :locals => { :target => variant } %>
         <div class="field" data-hook="sku">
           <%= vf.label :sku, Spree.t(:sku) %>
@@ -112,17 +110,7 @@
           </ul>
         </div>
         <div data-hook="admin_product_form_variant_images">
-          <ul class="toolbar inline-menu" data-hook="toolbar-product-images">
-            <li id="new_image_link" data-hook>
-              <%= link_to_with_icon('plus', Spree.t(:new_image), new_admin_product_image_path(@product), remote: true, :data => { :target => "#variant_#{variant.id}_image_table", :itemTag => 'tbody', :elementTemplate => "#variant_#{variant.id}_image_edit_template" }, :class => "plus button spree_add_image") %>
-            </li>
-          </ul>
-          <table class="variant_image_table" id="variant_<%= variant.id %>_image_table">
-            <% variant.images.each do |image| %>
-              <%= render partial: 'spree/admin/images/image_edit', locals: {image: image, f: vf} %>
-            <% end %>
-            <%= render partial: 'spree/admin/images/image_edit_handlebars_template', locals: {f: vf, variant: variant} %>
-          </table>
+          <%= render partial: "spree/admin/images/images", locals: {f: vf, variant: variant, is_master: false} %>
         </div>
       </td>
       <% @product.option_types.each do |option_type| %>
