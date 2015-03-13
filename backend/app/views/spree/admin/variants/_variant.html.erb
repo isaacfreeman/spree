@@ -1,4 +1,5 @@
 <% stock_items = variant.stock_items.sort_by{|i| i.stock_location.try(:name) || '' } %>
+<% variant_id = variant.id %>
 <tbody id="<%= spree_dom_id variant %>" <%= 'style="color:red;"' if variant.deleted? %> data-hook="variants_row" class="variant <%= cycle('odd', 'even')%>">
   <%= f.fields_for :variants, variant, child_index: variant.id do |vf| %>
     <tr class="show">
@@ -6,46 +7,47 @@
         <span class="handle"></span>
         <%= vf.hidden_field :position, :value => variant.position, :class => 'position_field' %>
       </td>
-      <td id="show_product_variants_attributes_<%= variant_counter %>_sku" class="sku field-display">
-        <div data-hook="admin_product_form_sku">
+      <td class="sku field-display">
+        <div data-hook="admin_product_form_sku" id="show_product_variants_attributes_<%= variant_id %>_sku" >
           <%= variant.sku %>
         </div>
         <div data-hook="admin_product_form_shipping_specs">
           <% unless variant.weight.blank? %>
             Weight:
-            <span id="show_product_variants_attributes_<%= variant_counter %>_weight" class="field-display">
+            <span id="show_product_variants_attributes_<%= variant_id %>_weight" class="field-display">
               <%= number_with_precision(variant.weight, :precision => 2) %>
             </span>
             &nbsp;
           <% end %>
           <% unless (variant.height.blank? && variant.width.blank? && variant.depth.blank?) %>
-            <span id="show_product_variants_attributes_<%= variant_counter %>_height" class="field-display">
+            <span id="show_product_variants_attributes_<%= variant_id %>_height" class="field-display">
               <%= variant.height.blank? ? '?' : number_with_precision(variant.height, :precision => 2) %>
             </span>h
             &times;
-            <span id="show_product_variants_attributes_<%= variant_counter %>_width" class="field-display">
+            <span id="show_product_variants_attributes_<%= variant_id %>_width" class="field-display">
               <%= variant.width.blank? ? '?' : number_with_precision(variant.width, :precision => 2) %>
             </span>w
             &times;
-            <span id="show_product_variants_attributes_<%= variant_counter %>_depth" class="field-display">
+            <span id="show_product_variants_attributes_<%= variant_id %>_depth" class="field-display">
               <%= variant.depth.blank? ? '?' : number_with_precision(variant.depth, :precision => 2) %>
             </span>d
           <% end %>
         </div>
         <div data-hook="admin_product_form_variant_images">
-          <ul class="images">
-            <% variant.images.each do |image| %>
-              <li class="image">
-                <%= link_to image_tag(image.attachment.url(:mini)), image.attachment.url(:product) %>
-              </li>
-            <% end %>
-          </ul>
+          <%= render partial: "spree/admin/images/images_show", locals: {images: variant.images} %>
         </div>
       </td>
-      <% @product.option_types.each do |option_type| %>
-        <td id="show_variant_<%= variant_counter %>_option_<%= option_type.name %>" class="option_value field-display"><%= variant.option_value(option_type.name) %></td>
-      <% end %>
-      <td id="show_product_variants_attributes_<%= variant_counter %>_price" class="price field-display">
+      <td class="options">
+        <% @product.option_types.each do |option_type| %>
+          <div class="option_value">
+            <label><%= option_type.presentation %></label>
+            <p id="show_variant_<%= variant_id %>_option_<%= option_type.name %>" class="option_value field-display">
+              <%= variant.option_value(option_type.name) %>
+            </p>
+          </div>
+        <% end %>
+      </td>
+      <td id="show_product_variants_attributes_<%= variant_id %>_price" class="price field-display">
         <%= variant.display_price.to_html %>
       </td>
       <td class="stock">
@@ -58,7 +60,7 @@
             <% end %>
           </table>
         <% else %>
-          <span id="show_product_variants_attributes_<%= variant_counter %>_track_inventory" class="field-display">
+          <span id="show_product_variants_attributes_<%= variant_id %>_track_inventory" class="field-display">
             Not tracking inventory
           </span>
         <% end %>
@@ -113,15 +115,15 @@
           <%= render partial: "spree/admin/images/images", locals: {f: vf, variant: variant, is_master: false} %>
         </div>
       </td>
-      <% @product.option_types.each do |option_type| %>
-        <td class="option_value">
-          <div id="variant_<%= variant_counter %>_option_<%= option_type.name %>" class="field field-option_value" data-hook="presentation">
-            <%= label :new_variant, option_type.presentation %>
-            <%= vf.collection_select 'option_value_ids', option_type.option_values, :id, :presentation,
-              { :prompt => true }, { :name => "product[variants_attributes][#{vf.index}][option_value_ids][]", :class => 'select2 fullwidth edit_field' } %>
-          </div>
-        </td>
-      <% end %>
+      <td class="options">
+        <% @product.option_types.each do |option_type| %>
+            <div id="variant_<%= variant_id %>_option_<%= option_type.name %>" class="field field-option_value" data-hook="presentation">
+              <%= label :new_variant, option_type.presentation %>
+              <%= vf.collection_select 'option_value_ids', option_type.option_values, :id, :presentation,
+                { :prompt => true }, { :name => "product[variants_attributes][#{vf.index}][option_value_ids][]", :class => 'select2 fullwidth edit_field' } %>
+            </div>
+        <% end %>
+      </td>
       <td>
         <div class="field" data-hook="price">
           <%= vf.label :price, Spree.t(:price) %>

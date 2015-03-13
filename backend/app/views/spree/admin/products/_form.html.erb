@@ -72,7 +72,5 @@
   <div class="clear"></div>
 </div>
 
-<% if @product.has_variants? %>
-  <%= render partial: 'spree/admin/variants/variant_handlebars_template' %>
-<% end %>
+<%= render partial: 'spree/admin/variants/variant_handlebars_template' %>
 <%= render partial: 'spree/admin/images/image_handlebars_template' %>

@@ -31,32 +31,30 @@
           </ul>
         </div>
       </td>
-      <td id="show_variant_{{ variant.position }}_option_tshirt-size" class="option_value field-display">?</td>
-      <td id="show_variant_{{ variant.position }}_option_tshirt-color" class="option_value field-display">?</td>
+      <td class="options">
+        <% @product.option_types.each do |option_type| %>
+          <label><%= option_type.presentation %></label>
+          <p id="show_product_variants_attributes_{{ variant.position }}_<%= option_type.name %>" class="price field-display">
+            ?
+          </p>
+        <% end %>
+      </td>
       <td id="show_product_variants_attributes_{{ variant.position }}_price" class="price field-display">?</td>
       <td class="stock">
         <table class="variant_stock_table" style="">
           <tbody>
-            <tr class="stock_item show">
-              <td style="width: 100%;">
-                <span class="stock_location">
-                  Stock Location One
-                </span>
-              </td>
-              <td>
-                <span class="quantity">0</span>
-              </td>
-            </tr>
-            <tr class="stock_item show">
-              <td style="width: 100%;">
-                <span class="stock_location">
-                  Stock Location Two
-                </span>
-              </td>
-              <td>
-                <span class="quantity">0</span>
-              </td>
-            </tr>
+            <% Spree::StockLocation.where(propagate_all_variants: true).each_with_index do |stock_location, i| %>
+              <tr class="stock_item show">
+                <td style="width: 100%;">
+                  <span class="stock_location">
+                    <%= stock_location.name %>
+                  </span>
+                </td>
+                <td>
+                  <span class="quantity">0</span>
+                </td>
+              </tr>
+            <% end %>
           </tbody>
         </table>
       </td>
@@ -116,8 +114,8 @@
           </table>
         </div>
       </td>
-      <% @product.option_types.each do |option_type| %>
-        <td class="option_value">
+      <td class="options">
+        <% @product.option_types.each do |option_type| %>
           <div id="variant_{{ variant.id }}_option_<%= option_type.name %>" class="field field-option_value" data-hook="presentation">
             <label for="new_variant_<%= option_type.name %>"><%= option_type.name %></label>
             <select class="select2 fullwidth edit_field select2-offscreen" id="product_variants_attributes_{{ variant.id }}_option_value_ids" name="product[variants_attributes][{{ variant.id }}][option_value_ids][]" tabindex="-1" title="">
@@ -126,8 +124,8 @@
               <% end %>
             </select>
           </div>
-        </td>
-      <% end %>
+          <% end %>
+      </td>
       <td>
         <div class="field" data-hook="price">
           <label for="product_variants_attributes_{{ variant.id }}_price">Price</label>
@@ -151,6 +149,7 @@
       <td class="stock">
         <div data-hook="track_inventory" class="field checkbox">
           <label style="margin-top: -10px;">
+            <input name="product[variants_attributes][{{ variant.id }}][track_inventory]" type="hidden" value="0">
             <input checked="checked" class="track_inventory" id="product_variants_attributes_{{ variant.id }}_track_inventory" name="product[variants_attributes][{{ variant.id }}][track_inventory]" type="checkbox" value="1">
             <%= Spree.t(:track_inventory) %>
           </label>
@@ -171,7 +170,7 @@
               <td>
                   <div class="field alpha two columns">
                       <div data-hook="admin_stock_movements_form_fields">
-                        <label for="product_variants_attributes_{{ variant.id }}_stock_items_attributes_<%= i %>_stock_movements_attributes_<%= i %>_quantity"><span class="translation_missing" title="translation missing: en.spree.modify_stock">Modify Stock</span></label>
+                        <label for="product_variants_attributes_{{ variant.id }}_stock_items_attributes_<%= i %>_stock_movements_attributes_<%= i %>_quantity"><%= Spree.t(:add_remove_stock_units) %></label>
                         <input class="modify_stock_quantity" id="product_variants_attributes_{{ variant.id }}_stock_items_attributes_<%= i %>_stock_movements_attributes_0_quantity" name="product[variants_attributes][{{ variant.id }}][stock_items_attributes][<%= i %>][stock_movements_attributes][0][quantity]" type="number" value="0">
                       </div>
                   </div>
@@ -181,7 +180,7 @@
                   <label for="product_variants_attributes_{{ variant.id }}_stock_items_attributes_<%= i %>_backorderable">
                     backorders allowed
                     <input name="product[variants_attributes][{{ variant.id }}][stock_items_attributes][<%= i %>][backorderable]" type="hidden" value="0">
-                    <input checked="checked" id="product_variants_attributes_{{ variant.id }}_stock_items_attributes_<%= i %>_backorderable" name="product[variants_attributes][{{ variant.id }}][stock_items_attributes][<%= i %>][backorderable]" type="checkbox" value="0">
+                    <input id="product_variants_attributes_{{ variant.id }}_stock_items_attributes_<%= i %>_backorderable" name="product[variants_attributes][{{ variant.id }}][stock_items_attributes][<%= i %>][backorderable]" type="checkbox" value="0">
                   </label>
                 </div>
               </td>

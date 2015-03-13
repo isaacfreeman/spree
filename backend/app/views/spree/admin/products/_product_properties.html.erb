@@ -1,6 +1,6 @@
 <ul class="toolbar inline-menu" data-hook="toolbar-product-properties">
   <li>
-    <%= link_to_add_fields Spree.t(:add_product_properties), 'tbody#product_properties', :class => 'plus button', :id => 'add_product_property_fields' %>
+    <%= link_to_add_fields Spree.t(:add_product_properties), 'tbody#product_properties', :class => 'plus button add_product_property_fields' %>
   </li>
   <li>
     <span id="new_ptype_link">
@@ -24,7 +24,18 @@
   </thead>
   <tbody id="product_properties" data-hook>
     <%= f.fields_for :product_properties do |pp_form| %>
-      <%= render 'spree/admin/product_properties/product_property_fields', :f => pp_form %>
+      <% if @product.properties.any? %>
+        <%= render 'spree/admin/product_properties/product_property_fields', :f => pp_form %>
+      <% else %>
+        <tr class="no-objects-found">
+          <td colspan="<%= @product.option_types.count + 4 %>">
+            <%= Spree.t(:no_resource_found, resource: I18n.t(:other, scope: 'activerecord.models.spree/properties')) %>,
+
+            <%= link_to_add_fields Spree.t(:add_one), 'tbody#product_properties', :class => 'add_product_property_fields' %>
+          </td>
+        </tr>
+      <% end %>
+
     <% end %>
   </tbody>
 </table>

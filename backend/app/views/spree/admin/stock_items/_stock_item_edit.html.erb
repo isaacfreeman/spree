@@ -1,25 +1,34 @@
 <%= f.fields_for :stock_items, stock_item do |sif| %>
-  <%= render partial: 'spree/admin/stock_items/stock_item_show', locals: {stock_item: stock_item} %>
+  <tr class="stock_item show">
+    <td style="width: 100%;">
+      <p class="stock_location">
+        <%= stock_item.stock_location.name %>
+      </p>
+    </td>
+    <td>
+      <span class="quantity"><%= stock_item.count_on_hand %></span>
+    </td>
+  </tr>
   <tr class="stock_item edit">
+    <td>
+      <div class="field omega two columns">
+        <%= sif.label :backorderable do %>
+          <%= sif.check_box :backorderable %>
+          <%= Spree.t(:backorders_allowed) %>
+        <% end %>
+      </div>
+    </td>
     <td>
       <% if stock_item.id %>
         <div class="field alpha two columns">
           <%= sif.fields_for :stock_movements, stock_item.stock_movements.build do |smf| %>
             <div data-hook="admin_stock_movements_form_fields">
-              <%= smf.label :quantity, Spree.t(:modify_stock) %>
+              <%= smf.label :quantity, Spree.t(:add_remove_stock_units) %>
               <%= smf.number_field :quantity, class: 'modify_stock_quantity', value: 0 %>
             </div>
           <% end %>
         </div>
       <% end %>
-    </td>
-    <td>
-      <div class="field omega two columns">
-        <%= sif.label :backorderable do %>
-          <%= Spree.t(:backorders_allowed) %>
-          <%= sif.check_box :backorderable %>
-        <% end %>
-      </div>
     </td>
   </tr>
 <% end %>

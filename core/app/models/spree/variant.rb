@@ -251,7 +251,8 @@ module Spree
 
       def create_stock_items
         StockLocation.where(propagate_all_variants: true).each do |stock_location|
-          stock_location.propagate_variant(self)
+          existing_stock_item = self.stock_items.select{|si| si.stock_location == stock_location}
+          stock_location.propagate_variant(self) unless existing_stock_item.present?
         end
       end
 

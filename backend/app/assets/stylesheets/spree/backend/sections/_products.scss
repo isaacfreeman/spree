@@ -185,3 +185,9 @@ table.grouped_rows#variants table.variant_stock_table tbody tr.show:first-child 
     }
   }
 }
+[data-hook="admin_product_form_variant_images"] {
+  clear: both;
+  .variant_image_table {
+    width: 100%;
+  }
+}
