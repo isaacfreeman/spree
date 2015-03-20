@@ -152,6 +152,43 @@ table {
           border: 1px solid very-light($color-3, 6);
         }
       }
+      &.new {
+        &.even tr td {
+          background-color: $color-action-new-bg;
+        }
+        td {
+          background: $color-action-new-bg;
+          border-top: solid 1px $color-action-new-brd;
+          border-bottom: solid 1px $color-action-new-brd;
+          border-right: solid 1px $color-action-new-brd;
+          &:first-child {
+            border-left: solid 1px $color-action-new-brd;
+            border-right: none;
+          }
+        }
+        td.actions {
+          background: none;
+          text-decoration: none;
+        }
+      }
+      &.remove {
+        td {
+          background: $color-action-remove-bg;
+          border-top: solid 1px $color-action-remove-brd;
+          border-bottom: solid 1px $color-action-remove-brd;
+          border-right: solid 1px $color-action-remove-brd;
+          text-decoration: line-through;
+          &:first-child {
+            border-left: solid 1px $color-action-remove-brd;
+            border-right: none;
+          }
+        }
+        td.actions {
+          background: none;
+          text-decoration: none;
+        }
+      }
+
 
       &:hover td {
         background-color: very-light($color-3, 5);

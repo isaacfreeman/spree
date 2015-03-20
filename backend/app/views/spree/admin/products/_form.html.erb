@@ -45,7 +45,7 @@
       <% end %>
     </ul>
     <div class="fields" style="<%= 'display:none;' unless @product.has_properties? %>">
-      <%= render partial: "spree/admin/products/product_properties", locals: {f: f} %>
+      <%= render partial: "spree/admin/product_properties/product_properties", locals: {f: f} %>
     </div>
   </fieldset>
 
@@ -59,8 +59,8 @@
       <% end %>
     </ul>
     <div class="fields" style="<%= 'display:none;' unless @product.has_images? %>">
-      <%= f.fields_for :master, @product.master do |vf| %>
-        <%= render partial: "spree/admin/images/images", locals: {f: vf, variant: @product.master, is_master: true} %>
+      <%= f.fields_for :master, @product.master do |mvf| %>
+        <%= render partial: "spree/admin/images/images", locals: {f: mvf, variant: @product.master, is_master: true} %>
       <% end %>
     </div>
   </fieldset>
@@ -74,3 +74,4 @@
 
 <%= render partial: 'spree/admin/variants/variant_handlebars_template' %>
 <%= render partial: 'spree/admin/images/image_handlebars_template' %>
+<%= render partial: 'spree/admin/product_properties/product_property_handlebars_template' %>

@@ -51,18 +51,17 @@
         <%= variant.display_price.to_html %>
       </td>
       <td class="stock">
-        <% if variant.track_inventory? && stock_items.any? %>
-          <table class="variant_stock_table" style="<%= 'display: none;' unless variant.track_inventory %>">
-            <% stock_items.each do |stock_item| %>
-              <% if stock_item.count_on_hand > 0 || stock_item.backorderable %>
+        <% if stock_items.any? %>
+          <div id="show_product_variants_attributes_<%= variant_id %>_track_inventory">
+            <table class="variant_stock_table" style="<%= 'display: none;' unless variant.track_inventory %>">
+              <% stock_items.each do |stock_item| %>
                 <%= render partial: 'spree/admin/stock_items/stock_item_show', locals: {stock_item: stock_item} %>
               <% end %>
-            <% end %>
-          </table>
-        <% else %>
-          <span id="show_product_variants_attributes_<%= variant_id %>_track_inventory" class="field-display">
-            Not tracking inventory
-          </span>
+            </table>
+            <div class="field-display not_tracking_inventory" style="<%= 'display: none;' if variant.track_inventory %>">
+              Not tracking inventory
+            </div>
+          </div>
         <% end %>
       </td>
       <td class="actions">

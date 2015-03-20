@@ -49,7 +49,8 @@ module Spree
           # Stops people submitting blank slugs, causing errors when they try to update the product again
           @product.slug = @product.slug_was if @product.slug.blank?
           invoke_callbacks(:update, :fails)
-          respond_with(@object)
+          flash[:error] = @product.errors.full_messages.join("<br />").html_safe
+          redirect_to edit_admin_product_path(@product)
         end
       end
 
@@ -81,7 +82,6 @@ module Spree
         @variants = @product.variants
         @variants = [@product.master] if @variants.empty?
         @properties = Spree::Property.pluck(:name)
-        @product.product_properties.build
         @stock_locations = StockLocation.accessible_by(current_ability, :read)
         if @stock_locations.empty?
           flash[:error] = Spree.t(:stock_management_requires_a_stock_location)

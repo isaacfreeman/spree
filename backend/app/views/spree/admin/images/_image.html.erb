@@ -18,15 +18,13 @@
         <%= imf.text_field :alt, :class => 'fullwidth' %>
       </td>
       <td class="actions">
-        <div class="form-buttons filter-actions actions" data-hook="buttons">
-          <%= link_to_with_icon('trash',
-                                Spree.t(:delete),
-                                admin_product_image_url(@product, image),
-                                :no_text => true,
-                                :class => "delete-image"
-                               ) unless image.new_record? %>
-          <%= imf.check_box '_destroy', :value => false, :class => 'destroy_marker', :style => 'display: none;' %>
-        </div>
+        <%= link_to_with_icon('trash',
+                              Spree.t(:delete),
+                              admin_product_image_url(@product, image),
+                              :no_text => true,
+                              :class => "delete-image"
+                             ) %>
+        <%= imf.check_box '_destroy', :value => false, :class => 'destroy_marker', :style => 'display: none;' %>
       </td>
     </tr>
   <% end %>

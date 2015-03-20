@@ -155,6 +155,10 @@ function updateShowElementFromSelect(editField) {
   var correspondingShowElement = '#show_' + editField.closest('.field-option_value').attr('id');
   $(correspondingShowElement).html(editField.children('option:selected').text());
 }
+function updateTrackInventoryFromCheckbox(editField) {
+  var correspondingShowElement = '#show_' + editField.attr('id');
+  $(correspondingShowElement).children('.variant_stock_table, .not_tracking_inventory').toggle();
+}
 function replaceId(element, newId) {
   // Replace last occurrence of a string of digits with the new ID
   element.prop('id', element.prop('id').replace(/\d+(?!.*\d+)/, newId))
@@ -189,7 +193,7 @@ function addVariantElement(target, itemTag) {
   var newId = new Date().getTime() + (uniqueId++);
   var element = {
     id: newId,
-    position: elementCount + 1,
+    position: elementCount,
     alt: '',
     parity: (elementCount % 2 == 0) ? 'even' : 'odd'
   };
@@ -198,6 +202,22 @@ function addVariantElement(target, itemTag) {
   $(target).append(newElement);
   $('#spree_variant_' + newId).find('.select2').select2()
   openVariantEdit($('#spree_variant_' + newId));
+}
+
+function addProductProperty(target, itemTag) {
+  // TODO: Get itemTag from template
+  window.elementTemplate = Handlebars.compile($('#product_property_template').text());
+  var elementCount = $(target).find(itemTag).length;
+  var newId = new Date().getTime() + (uniqueId++);
+  var element = {
+    id: newId,
+    position: elementCount,
+    alt: '',
+    parity: (elementCount % 2 == 0) ? 'even' : 'odd'
+  };
+  newElement = elementTemplate({product_property: element});
+  $(target).find('.no-objects-found').hide()
+  $(target).append(newElement);
 }
 
 function deleteVariant(variant) {
@@ -227,6 +247,20 @@ function deleteImage(image) {
   }
 }
 
+function deleteProductProperty(productProperty) {
+  if (productProperty.hasClass('new')) {
+    var productPropertyTable = productProperty.closest('table')
+    if (productPropertyTable.find('.product_property').length == 1) {
+      productPropertyTable.find('.no-objects-found').show();
+    }
+    productProperty.remove();
+  }
+  else {
+    // Otherwise, mark it to be deleted when the product form is submitted
+    toggleDestroyMarker(productProperty);
+  }
+}
+
 function deleteStockItem(stockItem) {
   toggleDestroyMarker(stockItem);
 }
@@ -249,7 +283,7 @@ function addImage(target, variantId, itemTag, isMaster) {
   var newId = new Date().getTime() + (uniqueId++);
   var element = {
     id: newId,
-    position: elementCount + 1,
+    position: elementCount,
     alt: '',
     parity: (elementCount % 2 == 0) ? 'even' : 'odd'
   };
@@ -305,13 +339,17 @@ $(document).ready(function(){
     event.preventDefault();
     deleteImage($(this).closest('.image'));
   });
+  $('body').on('click', '.product_property .delete-product_property', function(event) {
+    event.preventDefault();
+    deleteProductProperty($(this).closest('.product_property'));
+  });
   $('body').on('click', '#variants .stock_item.edit .delete-stock_item', function(event) {
     event.preventDefault();
     deleteStockItem($(this).closest('.stock_item'));
   });
 
   // Update on field changes
-  $('body').on('change', '#images .image .edit input', function(event) {
+  $('body').on('change', '#images .image .edit input:not(:checkbox)', function(event) {
     updateShowElementFromInput($(this));
   });
   $('body').on('change', '#images .image .edit select', function(event) {
@@ -320,7 +358,7 @@ $(document).ready(function(){
   $('body').on('change', '#images .image .edit textarea', function(event) {
     updateShowElementFromInput($(this));
   });
-  $('body').on('change', '#variants .variant .edit input', function(event) {
+  $('body').on('change', '#variants .variant .edit input:not(:checkbox)', function(event) {
     updateShowElementFromInput($(this));
   });
   $('body').on('change', '#variants .variant .edit .field-option_value select', function(event) {
@@ -329,6 +367,10 @@ $(document).ready(function(){
   $('body').on('change','#product_option_type_ids', function(event) {
     updateOptionTypes();
   });
+  $('body').on('change', '#variants .variant .edit .track_inventory', function(event) {
+    updateTrackInventoryFromCheckbox($(this));
+  });
+
 
   // toggle resource controls
   $( "a#manage_properties" ).click(function( event ) {
@@ -376,6 +418,13 @@ $(document).ready(function(){
       $(this).data("variantid"),
       $(this).data("itemtag"),
       $(this).data("ismaster")
+    );
+  })
+  $('body').on('click', '.spree_add_product_property', function(event) {
+    event.preventDefault();
+    addProductProperty(
+      $(this).data("target"),
+      $(this).data("itemtag")
     );
   })
 
@@ -512,12 +561,40 @@ $(document).ready(function(){
     var tdCount = $(this).find('tbody tr:first-child td').length
     $('table.sortable-images').sortable(
       {
+        items: 'tbody.image',
         handle: '.handle',
         helper: fixHelper,
         placeholder: 'ui-sortable-placeholder',
         update: function(event, ui) {
-          $(this).children('.image').each(function (index, image) {
+          $(this).children('tbody.image').each(function (index, image) {
             $(image).find('.position_field').val(index);
+          });
+        },
+        start: function (event, ui) {
+          // Set correct height for placehoder (from dragged tr)
+          ui.placeholder.height(ui.item.height())
+          // Fix placeholder content to make it correct width
+          ui.placeholder.html("<td colspan='"+(tdCount-1)+"'></td><td class='actions'></td>")
+        },
+        stop: function (event, ui) {
+          // Fix odd/even classes after reorder
+          $("table.sortable tr:even").removeClass("odd even").addClass("even");
+          $("table.sortable tr:odd").removeClass("odd even").addClass("odd");
+        }
+      });
+  });
+
+  $('table.sortable-product_properties').ready(function(){
+    var tdCount = $(this).find('tbody tr:first-child td').length
+    $('table.sortable-product_properties').sortable(
+      {
+        items: 'tr.product_property',
+        handle: '.handle',
+        helper: fixHelper,
+        placeholder: 'ui-sortable-placeholder',
+        update: function(event, ui) {
+          $(this).find('tr.product_property').each(function (index, product_property) {
+            $(product_property).find('.position_field').val(index);
           });
         },
         start: function (event, ui) {
