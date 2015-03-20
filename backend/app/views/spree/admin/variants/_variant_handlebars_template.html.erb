@@ -1,0 +1,202 @@
+<script type='text/template' id='variant_template'>
+  <tbody id="spree_variant_{{ variant.id }}" data-hook="variants_row" class="variant {{ variant.parity }} new">
+    <tr class="show">
+      <td class="handle no-border">
+        <span class="handle"></span>
+        <input class="position_field" id="product_variants_attributes_{{ variant.id }}_position" name="product[variants_attributes][{{ variant.id }}][position]" type="hidden" value="{{ variant.position }}">
+      </td>
+      <td id="show_product_variants_attributes_{{ variant.position }}_sku" class="sku field-display">
+        <div data-hook="admin_product_form_sku">
+        </div>
+        <div data-hook="admin_product_form_shipping_specs">
+            Weight:
+            <span id="show_product_variants_attributes_{{ variant.position }}_weight" class="field-display">
+              ?
+            </span>
+            &nbsp;
+            <span id="show_product_variants_attributes_{{ variant.position }}_height" class="field-display">
+              ?
+            </span>h
+            ×
+            <span id="show_product_variants_attributes_{{ variant.position }}_width" class="field-display">
+              ?
+            </span>w
+            ×
+            <span id="show_product_variants_attributes_{{ variant.position }}_depth" class="field-display">
+              ?
+            </span>d
+        </div>
+        <div data-hook="admin_product_form_variant_images">
+          <ul class="images">
+          </ul>
+        </div>
+      </td>
+      <td class="options">
+        <% @product.option_types.each do |option_type| %>
+          <label><%= option_type.presentation %></label>
+          <p id="show_product_variants_attributes_{{ variant.position }}_<%= option_type.name %>" class="price field-display">
+            ?
+          </p>
+        <% end %>
+      </td>
+      <td id="show_product_variants_attributes_{{ variant.position }}_price" class="price field-display">?</td>
+      <td class="stock">
+        <table class="variant_stock_table" style="">
+          <tbody>
+            <% Spree::StockLocation.where(propagate_all_variants: true).each_with_index do |stock_location, i| %>
+              <tr class="stock_item show">
+                <td style="width: 100%;">
+                  <span class="stock_location">
+                    <%= stock_location.name %>
+                  </span>
+                </td>
+                <td>
+                  <span class="quantity">0</span>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </td>
+      <td class="actions">
+          <a class="fa fa-edit icon_link with-tip no-text" data-action="edit" href="http://reference-spree-store.dev/admin/products/product-with-variants/variants/50/edit"></a>
+          <a class="delete-variant fa fa-trash icon_link with-tip no-text" href="http://reference-spree-store.dev/admin/products/product-with-variants/variants/50"></a>
+          <input name="product[variants_attributes][{{ variant.id }}][_destroy]" type="hidden" value="0"><input class="destroy_marker" id="product_variants_attributes_{{ variant.id }}__destroy" name="product[variants_attributes][{{ variant.id }}][_destroy]" style="display: none;" type="checkbox" value="1">
+      </td>
+    </tr>
+
+    <tr class="edit" style="display: none;">
+      <td colspan='2' class="sku">
+        <div class="field" data-hook="sku">
+          <label for="product_variants_attributes_{{ variant.id }}_sku">SKU</label>
+          <input class="fullwidth edit_field" id="product_variants_attributes_{{ variant.id }}_sku" name="product[variants_attributes][{{ variant.id }}][sku]" type="text" value="">
+        </div>
+        <div data-hook="admin_product_form_shipping_specs">
+          <ul>
+            <div class="shipping_specs_weight_field field alpha two columns" data-hook="admin_product_form_weight">
+              <label for="product_variants_attributes_{{ variant.id }}_weight">Weight</label>
+              <input id="product_variants_attributes_{{ variant.id }}_weight" name="product[variants_attributes][{{ variant.id }}][weight]" size="4" type="text" value="">
+            </div>
+            <li class="shipping_specs_height_field field one columns" data-hook="admin_product_form_height">
+              <label for="product_variants_attributes_{{ variant.id }}_height">Height</label>
+              <input id="product_variants_attributes_{{ variant.id }}_height" name="product[variants_attributes][{{ variant.id }}][height]" size="4" type="text" value="">
+            </li>
+            <li class="shipping_specs_width_field field one columns" data-hook="admin_product_form_width">
+              <label for="product_variants_attributes_{{ variant.id }}_width">Width</label>
+              <input id="product_variants_attributes_{{ variant.id }}_width" name="product[variants_attributes][{{ variant.id }}][width]" size="4" type="text" value="">
+            </li>
+            <li class="shipping_specs_depth_field field omega one columns" data-hook="admin_product_form_depth">
+              <label for="product_variants_attributes_{{ variant.id }}_depth">Depth</label>
+              <input id="product_variants_attributes_{{ variant.id }}_depth" name="product[variants_attributes][{{ variant.id }}][depth]" size="4" type="text" value="">
+            </li>
+          </ul>
+        </div>
+        <div data-hook="admin_product_form_variant_images">
+          <ul class="toolbar inline-menu" data-hook="toolbar-product-images">
+            <li id="new_image_link" data-hook="">
+              <a class="plus button spree_add_image fa fa-plus icon_link with-tip" data-variantid="{{variant.id}}" data-itemtag="tbody" data-remote="true" data-ismaster="false" data-target="#variant_{{ variant.id }}_image_table" href="/admin/products/product-with-variants/images/new"><span class="text">New Image</span></a>
+            </li>
+          </ul>
+          <table class="variant_image_table" id="variant_{{ variant.id }}_image_table">
+            <colgroup>
+              <col style="width: 5%">
+              <col style="width: 25%">
+              <col style="width: 30%">
+              <col style="width: 15%">
+            </colgroup>
+            <thead>
+              <tr data-hook="images_header">
+                <th colspan="2"><%= Spree.t(:thumbnail) %></th>
+                <th><%= Spree.t(:alt_text) %></th>
+                <th class="actions"></th>
+              </tr>
+            </thead>
+          </table>
+        </div>
+      </td>
+      <td class="options">
+        <% @product.option_types.each do |option_type| %>
+          <div id="variant_{{ variant.id }}_option_<%= option_type.name %>" class="field field-option_value" data-hook="presentation">
+            <label for="new_variant_<%= option_type.name %>"><%= option_type.name %></label>
+            <select class="select2 fullwidth edit_field select2-offscreen" id="product_variants_attributes_{{ variant.id }}_option_value_ids" name="product[variants_attributes][{{ variant.id }}][option_value_ids][]" tabindex="-1" title="">
+              <% option_type.option_values.each do |option_value| %>
+                <option value="<%= option_value.id %>"><%= option_value.name %></option>
+              <% end %>
+            </select>
+          </div>
+          <% end %>
+      </td>
+      <td>
+        <div class="field" data-hook="price">
+          <label for="product_variants_attributes_{{ variant.id }}_price">Price</label>
+          <input class="fullwidth edit_field" id="product_variants_attributes_{{ variant.id }}_price" name="product[variants_attributes][{{ variant.id }}][price]" type="text" value="">
+        </div>
+
+        <div class="field" data-hook="cost_price">
+          <label for="product_variants_attributes_{{ variant.id }}_cost_price">Cost Price</label>
+          <input class="fullwidth" id="product_variants_attributes_{{ variant.id }}_cost_price" name="product[variants_attributes][{{ variant.id }}][cost_price]" type="text">
+        </div>
+
+        <div class="field" data-hook="tax_category">
+          <label for="product_variants_attributes_{{ variant.id }}_tax_category_id">Tax Category</label>
+          <select class="select2 fullwidth select2-offscreen" id="product_variants_attributes_{{ variant.id }}_tax_category_id" name="product[variants_attributes][{{ variant.id }}][tax_category_id]" tabindex="-1" title="Tax Category">
+            <% @tax_categories.each do |tax_category| %>
+              <option value="<%= tax_category.id %>"><%= tax_category.name %></option>
+            <% end %>
+          </select>
+        </div>
+      </td>
+      <td class="stock">
+        <div data-hook="track_inventory" class="field checkbox">
+          <label style="margin-top: -10px;">
+            <input name="product[variants_attributes][{{ variant.id }}][track_inventory]" type="hidden" value="0">
+            <input checked="checked" class="track_inventory" id="product_variants_attributes_{{ variant.id }}_track_inventory" name="product[variants_attributes][{{ variant.id }}][track_inventory]" type="checkbox" value="1">
+            <%= Spree.t(:track_inventory) %>
+          </label>
+        </div>
+        <table class="variant_stock_table" style="">
+          <% Spree::StockLocation.where(propagate_all_variants: true).each_with_index do |stock_location, i| %>
+            <tr class="stock_item show">
+              <td style="width: 100%;">
+                <span class="stock_location">
+                  <%= stock_location.name %>
+                </span>
+              </td>
+              <td>
+                <span class="quantity">0</span>
+              </td>
+            </tr>
+            <tr class="stock_item edit">
+              <td>
+                  <div class="field alpha two columns">
+                      <div data-hook="admin_stock_movements_form_fields">
+                        <label for="product_variants_attributes_{{ variant.id }}_stock_items_attributes_<%= i %>_stock_movements_attributes_<%= i %>_quantity"><%= Spree.t(:add_remove_stock_units) %></label>
+                        <input class="modify_stock_quantity" id="product_variants_attributes_{{ variant.id }}_stock_items_attributes_<%= i %>_stock_movements_attributes_0_quantity" name="product[variants_attributes][{{ variant.id }}][stock_items_attributes][<%= i %>][stock_movements_attributes][0][quantity]" type="number" value="0">
+                      </div>
+                  </div>
+              </td>
+              <td>
+                <div class="field omega two columns">
+                  <label for="product_variants_attributes_{{ variant.id }}_stock_items_attributes_<%= i %>_backorderable">
+                    backorders allowed
+                    <input name="product[variants_attributes][{{ variant.id }}][stock_items_attributes][<%= i %>][backorderable]" type="hidden" value="0">
+                    <input id="product_variants_attributes_{{ variant.id }}_stock_items_attributes_<%= i %>_backorderable" name="product[variants_attributes][{{ variant.id }}][stock_items_attributes][<%= i %>][backorderable]" type="checkbox" value="0">
+                  </label>
+                </div>
+              </td>
+            </tr>
+            <input id="product_variants_attributes_{{ variant.id }}_stock_items_attributes_<%= i %>_stock_location_id" name="product[variants_attributes][{{ variant.id }}][stock_items_attributes][<%= i %>][stock_location_id]" type="hidden" value="<%= stock_location.id %>">
+            <input id="product_variants_attributes_{{ variant.id }}_stock_items_attributes_<%= i %>_id" name="product[variants_attributes][{{ variant.id }}][stock_items_attributes][<%= i %>][id]" type="hidden" value="">
+
+          <% end %>
+        </table>
+      </td>
+      <td class="actions">
+        <div class="form-buttons filter-actions actions" data-hook="buttons">
+          <a class="fa fa-ok icon_link with-tip no-text" data-target="spree_variant_50" href="#"></a>
+        </div>
+      </td>
+    </tr>
+    <input id="product_variants_attributes_{{ variant.id }}_id" name="product[variants_attributes][{{ variant.id }}][id]" type="hidden">
+  </tbody>
+</script>

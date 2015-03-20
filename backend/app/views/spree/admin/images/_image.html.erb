@@ -1,0 +1,31 @@
+<tbody id="<%= spree_dom_id image %>" data-hook="images_row" class="image <%= cycle('odd', 'even')%>">
+  <%= f.fields_for :images, image do |imf| %>
+    <tr class="edit" data-hook="admin_image_form_fields">
+      <td class="no-border">
+        <span class="handle"></span>
+        <%= imf.hidden_field :position, :value => image.position, :class => 'position_field' %>
+      </td>
+      <td>
+        <%= image_tag(image.attachment.url(:mini)) %>
+        <% unless image.persisted? %>
+          <%= render :partial => 'spree/shared/error_messages', :locals => { :target => image } %>
+          <div data-hook="file" class="field">
+            <%= imf.file_field :attachment %>
+          </div>
+        <% end %>
+      </td>
+      <td data-hook="alt_text" class="field">
+        <%= imf.text_field :alt, :class => 'fullwidth' %>
+      </td>
+      <td class="actions">
+        <%= link_to_with_icon('trash',
+                              Spree.t(:delete),
+                              admin_product_image_url(@product, image),
+                              :no_text => true,
+                              :class => "delete-image"
+                             ) %>
+        <%= imf.check_box '_destroy', :value => false, :class => 'destroy_marker', :style => 'display: none;' %>
+      </td>
+    </tr>
+  <% end %>
+</tbody>

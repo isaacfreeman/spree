@@ -1,0 +1,33 @@
+<table id="variants" class="index sortable-variants grouped_rows" data-sortable-link="<%= update_positions_admin_product_variants_path(@product) %>">
+  <colgroup>
+    <col style="width: 5%" />
+    <col style="width: 30%" />
+    <% if @product.option_types.any? %>
+      <col style="width: 15%" />
+    <% end %>
+    <col style="width: 15%" />
+    <col style="width: 25%" />
+    <col style="width: 10%" />
+  </colgroup>
+  <thead data-hook="variants_header">
+    <tr>
+      <th colspan="2" class="sku"><%= Spree.t(:variant) %></th>
+      <% if @product.option_types.any? %>
+        <th class="option_types"><%= Spree.t(:options) %></th>
+      <% end %>
+      <th class="price"><%= Spree.t(:price) %></th>
+      <th class="stock"><%= Spree.t(:stock) %></th>
+      <th class="actions"></th>
+    </tr>
+  </thead>
+  <% if @product.has_variants? %>
+    <%= render partial: "spree/admin/variants/variant", collection: @variants, locals: {f: f} %>
+  <% else %>
+    <tr class="no-objects-found">
+      <td colspan="5">
+        <%= Spree.t(:no_resource_found, resource: I18n.t(:other, scope: 'activerecord.models.spree/variant')) %>,
+        <%= link_to Spree.t(:add_one), 'javascript:', :data => { :target => '#variants', :itemTag => 'tbody.variant'}, :class => "spree_add_variant"  %>!
+      </td>
+    </tr>
+  <% end %>
+</table>

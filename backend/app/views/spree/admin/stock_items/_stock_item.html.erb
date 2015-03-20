@@ -1,0 +1,79 @@
+<tbody id="<%= spree_dom_id stock_item %>" <%= 'style="color:red;"' if stock_item.deleted? %> data-hook="stock_items_row" class="stock_item <%= cycle('odd', 'even')%>">
+  <%= f.fields_for :stock_items, stock_item do |sif| %>
+    <tr class="show">
+      <td class="align-center"><%= stock_item.stock_location.name %></td>
+      <td class="align-center">
+        <% variant = stock_item.variant %>
+        <%= variant.sku_and_options_text %>
+        <br>
+        <% if variant.images.present? %>
+          <%= image_tag variant.images.first.attachment.url(:mini) %>
+        <% end %>
+        <br/>
+        Track inventory: <%= variant.track_inventory? ? 'yes' : 'no' %>
+      </td>
+      <td class="align-center">
+        <%= stock_item.count_on_hand %>
+      </td>
+      <td class="align-center">
+        <%= stock_item.backorderable? ? 'yes' : 'no' %>
+      </td>
+      <td class="actions">
+        <% unless stock_item.deleted? %>
+          <%= link_to_with_icon('edit',
+          Spree.t(:edit),
+          stock_item.new_record? ? '#' : edit_admin_product_variant_url(@product, stock_item),
+          :no_text => true,
+          :data => {:action => 'edit'}
+          ) %>
+          <%= link_to_with_icon('trash',
+          Spree.t(:delete),
+          admin_product_variant_url(@product, stock_item),
+          :no_text => true,
+          :class => "delete-variant"
+          ) unless stock_item.deleted? || variant.new_record? %>
+          <%= sif.check_box '_destroy', :value => false, :class => 'destroy_marker', :style => 'display: none;' %>
+        <% end %>
+      </td>
+    </tr>
+    <tr class="edit" style="display: none;">
+      <td class="align-center">
+        <div class="field" data-hook="stock_location">
+          <%= sif.collection_select(:stock_location_id, @stock_locations, :id, :name, { :include_blank => Spree.t('match_choices.none') }, { :class => 'select2 fullwidth' }) %>
+        </div>
+      </td>
+      <td class="align-center">
+        <div class="field" data-hook="stock_location">
+          <%= sif.collection_select(:variant_id, @variants, :id, :sku_and_options_text, { :include_blank => Spree.t('match_choices.none') }, { :class => 'select2 fullwidth' }) %>
+        </div>
+        <%= form_tag admin_product_variants_including_master_path(@product, variant, format: :js), method: :put, class: 'toggle_variant_track_inventory' do %>
+        <%= check_box_tag 'track_inventory', 1, variant.track_inventory?,
+        class: 'track_inventory_checkbox' %>
+        <%= Spree.t(:track_inventory) %>
+        <%= hidden_field_tag 'variant[track_inventory]', variant.track_inventory?,
+        class: 'variant_track_inventory',
+          id: "variant_track_inventory_#{variant.id}" %>
+          <% end %>
+        </td>
+        <td class="align-center">
+          <%= sif.number_field :count_on_hand, class: 'fullwidth', value: stock_item.count_on_hand %>
+        </td>
+        <td class="align-center">
+          <%= form_tag admin_stock_item_path(stock_item), method: :put, class: 'toggle_stock_item_backorderable' do %>
+          <%= check_box_tag 'stock_item[backorderable]', true, stock_item.backorderable?, class: 'stock_item_backorderable', id: "stock_item_backorderable_#{stock_item.stock_location.id}" %>
+          <% end %>
+        </td>
+        <td class="actions">
+          <div class="form-buttons filter-actions actions" data-hook="buttons">
+            <%= link_to_with_icon('ok',
+            Spree.t('actions.continue'),
+            '#',
+            :no_text => true,
+            :'data-target' => spree_dom_id(stock_item)
+            ) %>
+          </div>
+        </td>
+      </tr>
+
+  <% end %>
+</tbody>

@@ -19,6 +19,14 @@ module Spree
       end
 
       def update
+        @variants = @product.variants
+        @variants = [@product.master] if @variants.empty?
+        @stock_locations = StockLocation.accessible_by(current_ability, :read)
+        if @stock_locations.empty?
+          flash[:error] = Spree.t(:stock_management_requires_a_stock_location)
+          redirect_to admin_stock_locations_path
+        end
+
         if params[:product][:taxon_ids].present?
           params[:product][:taxon_ids] = params[:product][:taxon_ids].split(',')
         end
@@ -30,14 +38,19 @@ module Spree
           invoke_callbacks(:update, :after)
           flash[:success] = flash_message_for(@object, :successfully_updated)
           respond_with(@object) do |format|
-            format.html { redirect_to location_after_save }
+            if request.xhr?
+              format.json
+            else
+              format.html { redirect_to location_after_save }
+            end
             format.js   { render :layout => false }
           end
         else
           # Stops people submitting blank slugs, causing errors when they try to update the product again
           @product.slug = @product.slug_was if @product.slug.blank?
           invoke_callbacks(:update, :fails)
-          respond_with(@object)
+          flash[:error] = @product.errors.full_messages.join("<br />").html_safe
+          redirect_to edit_admin_product_path(@product)
         end
       end
 
@@ -63,6 +76,17 @@ module Spree
         end
 
         redirect_to edit_admin_product_url(@new)
+      end
+
+      def edit
+        @variants = @product.variants
+        @variants = [@product.master] if @variants.empty?
+        @properties = Spree::Property.pluck(:name)
+        @stock_locations = StockLocation.accessible_by(current_ability, :read)
+        if @stock_locations.empty?
+          flash[:error] = Spree.t(:stock_management_requires_a_stock_location)
+          redirect_to admin_stock_locations_path
+        end
       end
 
       def stock

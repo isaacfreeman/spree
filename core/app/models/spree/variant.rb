@@ -43,6 +43,10 @@ module Spree
     after_create :set_position
     after_create :set_master_out_of_stock, :unless => :is_master?
 
+    accepts_nested_attributes_for :stock_items, allow_destroy: true
+    accepts_nested_attributes_for :images, allow_destroy: true
+    accepts_nested_attributes_for :images , :reject_if => proc { |attributes| attributes['attachment'].blank? }, :allow_destroy => true
+
     after_touch :clear_in_stock_cache
 
     def self.active(currency = nil)
@@ -167,7 +171,7 @@ module Spree
       options.keys.map { |key|
         m = "#{options[key]}_price_modifier_amount".to_sym
         if self.respond_to? m
-          self.send(m, options[key]) 
+          self.send(m, options[key])
         else
           0
         end
@@ -248,7 +252,8 @@ module Spree
 
       def create_stock_items
         StockLocation.where(propagate_all_variants: true).each do |stock_location|
-          stock_location.propagate_variant(self)
+          existing_stock_item = self.stock_items.select{|si| si.stock_location == stock_location}
+          stock_location.propagate_variant(self) unless existing_stock_item.present?
         end
       end
 

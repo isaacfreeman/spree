@@ -1,4 +1,6 @@
 <% @prototype_properties.sort_by{ |prop| -prop[:id] }.each do |prop| %>
-  $("a.spree_add_fields").click();
-  $(".product_property.fields:first input[type=text]:first").val("<%= prop.name %>");
+  $("a.spree_add_product_property").click();
+  $(".product_property.new.fields:last input[type=text]:first").val("<%= prop.name %>");
 <% end %>
+$("#prototypes").hide();
+$("#new_ptype_link").show();

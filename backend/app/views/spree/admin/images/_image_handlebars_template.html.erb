@@ -1,0 +1,22 @@
+<script type='text/template' id='variant_image_template'>
+  <tbody id="spree_image_{{ image.id }}" data-hook="images_row" class="image {{ image.parity }} new">
+    <tr class="edit" data-hook="admin_image_form_fields">
+      <td class="no-border">
+        <span class="handle"></span>
+        <input class="position_field" id="product_variants_attributes_VARIANTIDGOESHERE_images_attributes_{{ image.id }}_position" name="product[variants_attributes][VARIANTIDGOESHERE][images_attributes][{{ image.id }}][position]" type="hidden" value="{{ image.position }}">
+      </td>
+      <td>
+        <div data-hook="file" class="field">
+          <input id="product_variants_attributes_VARIANTIDGOESHERE_images_attributes_{{ image.id }}_attachment" name="product[variants_attributes][VARIANTIDGOESHERE][images_attributes][{{ image.id }}][attachment]" type="file">
+        </div>
+      </td>
+      <td data-hook="alt_text" class="field">
+        <input id="product_variants_attributes_VARIANTIDGOESHERE_images_attributes_{{ image.id }}_alt" name="product[variants_attributes][VARIANTIDGOESHERE][images_attributes][{{ image.id }}][alt]" value="{{ image.alt }}">
+      </td>
+      <td class="actions">
+        <a class="delete-image fa fa-trash icon_link with-tip no-text" href="#"></a>
+      </td>
+    </tr>
+    <input id="product_variants_attributes_VARIANTIDGOESHERE_images_attributes_{{ image.id }}_id" name="product[variants_attributes][VARIANTIDGOESHERE][images_attributes][{{ image.id }}][id]" type="hidden" value="">
+  </tbody>
+</script>

@@ -15,6 +15,8 @@ module Spree
     after_save :conditional_variant_touch, if: :changed?
     after_touch { variant.touch }
 
+    accepts_nested_attributes_for :stock_movements, allow_destroy: false, :reject_if => lambda { |sm| sm[:quantity].to_i == 0 }
+
     def backordered_inventory_units
       Spree::InventoryUnit.backordered_for_stock_item(self)
     end

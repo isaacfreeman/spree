@@ -1,0 +1,18 @@
+<script type='text/template' id='product_property_template'>
+  <tr class="product_property fields new" id="spree_product_property_{{ product_property.id }}" data-hook="product_property">
+    <td class="no-border">
+      <span class="handle"></span>
+      <input class="position_field" id="product_product_properties_attributes_{{ product_property.id }}_position" name="product[product_properties_attributes][{{ product_property.id }}][position]" type="hidden" value="{{ product_property.position }}">
+    </td>
+    <td class="property_name">
+      <input class="autocomplete" id="product_product_properties_attributes_{{ product_property.id }}_property_name" name="product[product_properties_attributes][{{ product_property.id }}][property_name]" type="text" value="">
+    </td>
+    <td class="value">
+      <input id="product_product_properties_attributes_{{ product_property.id }}_value" name="product[product_properties_attributes][{{ product_property.id }}][value]" type="text" value="">
+    </td>
+    <td class="actions">
+      <a class="delete-product_property fa fa-trash icon_link with-tip no-text" href="#"></a>
+    </td>
+
+  </tr>
+</script>
